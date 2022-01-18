@@ -1,0 +1,1520 @@
+openapi: 3.0.1
+info:
+  title: GoCart Order Management
+  description: "API used for managing order data. Operations such as creating a new\
+    \ order, voiding, and refunding can be found here. Unless otherwise specified,\
+    \ each of these endpoints requires the user to be authenticated with a  merchant's\
+    \ HMAC token."
+  contact:
+    email: test@example.com
+  license:
+    name: MIT
+    url: https://github.com/GoCartPay/gocart-java-sdk/blob/main/LICENSE
+  version: v1
+servers:
+- url: https://virtserver.swaggerhub.com/GoCartPay/Orders/v1
+  description: SwaggerHub API Auto Mocking
+- url: https://api-staging.gocartpay.com
+  description: Staging Environment
+- url: https://api.gocartpay.com/
+  description: Production Environment
+security:
+- Bearer: []
+paths:
+  /orders:
+    get:
+      tags:
+      - Multiple Orders
+      summary: Retrieve all orders
+      description: Retrives all orders for the active merchant in a paginated response.
+        Can optionally filter based on a specific order id.
+      parameters:
+      - name: orderId
+        in: query
+        description: External Order ID
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          nullable: true
+          example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+      - name: pageSize
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 50
+          minimum: 1
+          type: integer
+          format: int32
+          default: 25
+      - name: pageNumber
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTOBasePagedResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/OrderDTOBasePagedResponse'
+        "401":
+          description: Client is not authenticated.
+        default:
+          description: Unexpected response
+    post:
+      tags:
+      - Single Order
+      summary: Create an order
+      description: "<br>JWT Required: Checkout\r\n<br>Authorization Policy: IP Address,\
+        \ Domain\r\n<br>CORS Policy: Merchant"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderInput'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderInput'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderInput'
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Order'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "401":
+          description: Client is not authenticated.
+        "403":
+          description: Client is not authorized to perform requested operation.
+        "422":
+          description: Client Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        default:
+          description: Unexpected response
+  /orders/{orderId}:
+    get:
+      tags:
+      - Single Order
+      summary: Retrieve an order
+      description: "<br>JWT Required: Checkout/Customer\r\n<br>Authorization Policy:\
+        \ IP Address\r\n<br>CORS Policy: Button"
+      parameters:
+      - name: orderId
+        in: path
+        description: External Order ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          nullable: false
+          example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/OrderDTO'
+        "401":
+          description: Client is not authenticated.
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        default:
+          description: Unexpected response
+    put:
+      tags:
+      - Single Order
+      summary: Updates an order
+      description: "<br>JWT Required: Customer\r\n<br>Authorization Policy: IP Address\r\
+        \n<br>CORS Policy: Button"
+      parameters:
+      - name: orderId
+        in: path
+        description: External Order ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          nullable: false
+          example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderInput'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderInput'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderInput'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Order'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "401":
+          description: Client is not authenticated.
+        "403":
+          description: Client is not authorized to perform requested operation.
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        default:
+          description: Unexpected response
+  /orders/{orderId}/refund:
+    post:
+      tags:
+      - Single Order
+      summary: Refunds an order
+      description: Refunds an order
+      parameters:
+      - name: orderId
+        in: path
+        description: External Order ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          nullable: false
+          example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+          text/xml:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+          application/*+xml:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+        "404":
+          description: Not found with details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        default:
+          description: Unexpected response
+  /orders/{orderId}/capture:
+    post:
+      tags:
+      - Single Order
+      summary: Captures an order
+      description: Captures an order
+      parameters:
+      - name: orderId
+        in: path
+        description: External Order ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          nullable: false
+          example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCaptureRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/OrderCaptureRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/OrderCaptureRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/OrderCaptureRequest'
+          text/xml:
+            schema:
+              $ref: '#/components/schemas/OrderCaptureRequest'
+          application/*+xml:
+            schema:
+              $ref: '#/components/schemas/OrderCaptureRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not found with details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        default:
+          description: Unexpected response
+  /orders/{orderId}/void:
+    post:
+      tags:
+      - Single Order
+      summary: Voids an order
+      description: Voids an order
+      parameters:
+      - name: orderId
+        in: path
+        description: External Order ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          nullable: false
+          example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoidRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/VoidRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/VoidRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/VoidRequest'
+          text/xml:
+            schema:
+              $ref: '#/components/schemas/VoidRequest'
+          application/*+xml:
+            schema:
+              $ref: '#/components/schemas/VoidRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+        "404":
+          description: Not found with details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        default:
+          description: Unexpected response
+  /orders/{orderId}/reverse:
+    post:
+      tags:
+      - Single Order
+      summary: Refunds an order
+      description: "<br>JWT Required: Merchant\r\n<br>Authorization Policy: IP Address\r\
+        \n<br>Roles: Super Admin\r\n<br>CORS Policy: Merchant Portal"
+      parameters:
+      - name: orderId
+        in: path
+        description: External Order ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          nullable: false
+          example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+      requestBody:
+        description: Reversal Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReversalRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ReversalRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ReversalRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ReversalRequest'
+          text/xml:
+            schema:
+              $ref: '#/components/schemas/ReversalRequest'
+          application/*+xml:
+            schema:
+              $ref: '#/components/schemas/ReversalRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+        "404":
+          description: Not found with details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        default:
+          description: Unexpected response
+  /orders/{orderId}/pay:
+    post:
+      tags:
+      - Single Order
+      summary: Submit a payment request for the given customer and payment token
+      description: "JWT Required: Customer\r\n<br>Authorization Policy: IP Address\r\
+        \n<br>CORS Policy: Button\r\n<br></para>\r\n<para>"
+      parameters:
+      - name: orderId
+        in: path
+        description: External Order ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          nullable: false
+          example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+      requestBody:
+        description: Order Payment request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderPaymentRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/OrderPaymentRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/OrderPaymentRequest'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/OrderPaymentRequest'
+          text/xml:
+            schema:
+              $ref: '#/components/schemas/OrderPaymentRequest'
+          application/*+xml:
+            schema:
+              $ref: '#/components/schemas/OrderPaymentRequest'
+      responses:
+        "200":
+          description: "Successful call. If there were payment errors, the following\
+            \ codes may be returned in the response body:<br><br>\n  900: Card was\
+            \ declined<br>\n  991: Card is expired<br>\n  900: Card was declined<br>\n\
+            \  991: Card is expired<br>\n  992: There was a problem communicating\
+            \ with the network<br>\n  993: Transaction pending<br>\n  994: System\
+            \ error<br>\n  995: Unable to process card<br>\n  996: Unable to process\
+            \ the order<br>\n  998: WPG internal error<br>\n  999: EXPRESS internal\
+            \ error<br>\n  1000: VAP internal error<br>\n  1001: Token Management\
+            \ System Error<br>\n  -1: Unknown error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResult'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PaymentResult'
+        "400":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        default:
+          description: Unexpected response
+  /orders/{orderId}/shipping-methods/{shippingAddressId}:
+    get:
+      tags:
+      - Single Order
+      summary: Get an order's shipping and tax info.
+      description: Gets Shipping and Tax information from Merchant's ShippingAndTax
+        Callback
+      parameters:
+      - name: orderId
+        in: path
+        description: External Order ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          nullable: false
+          example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+      - name: shippingAddressId
+        in: path
+        description: shippingAddressId
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          description: shippingAddressId
+          nullable: true
+      - name: base64ShippingUrl
+        in: query
+        description: shippingUrl as base 64 string
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          description: shippingUrl as base 64 string
+          nullable: true
+      - name: base64TaxUrl
+        in: query
+        description: taxUrl as base 64 string
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          description: taxUrl as base 64 string
+          nullable: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingMethodsResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ShippingMethodsResponse'
+        "404":
+          description: Not found with details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        default:
+          description: Unexpected response
+components:
+  schemas:
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+      additionalProperties:
+        type: object
+        additionalProperties: false
+    ExceptionResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          nullable: true
+          readOnly: true
+      additionalProperties: false
+    PaymentStatus:
+      type: string
+      enum:
+      - AUTHORIZED
+      - CAPTURED
+      - ERROR
+      - VOIDED
+    PaymentResultError:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          nullable: true
+        errorDescription:
+          type: string
+          nullable: true
+        detailedErrorCode:
+          type: string
+          nullable: true
+        detailedErrorDescription:
+          type: string
+          nullable: true
+      additionalProperties: false
+    AVSStatus:
+      type: string
+      enum:
+      - Match
+      - PartialMatch
+      - NoMatch
+      - NotSupported
+      - Omitted
+      - Error
+    AVSResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/AVSStatus'
+        gatewayCode:
+          type: string
+          nullable: true
+          readOnly: true
+      additionalProperties: false
+    CVVStatus:
+      type: string
+      enum:
+      - Match
+      - NoMatch
+      - NotProcessed
+      - Omitted
+      - Error
+    CVVResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/CVVStatus'
+        gatewayCode:
+          type: string
+          nullable: true
+          readOnly: true
+      additionalProperties: false
+    PaymentResult:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        error:
+          $ref: '#/components/schemas/PaymentResultError'
+        avsResponse:
+          $ref: '#/components/schemas/AVSResponse'
+        cvvResponse:
+          $ref: '#/components/schemas/CVVResponse'
+        networkTransactionId:
+          type: string
+          nullable: true
+        gatewayTransactionId:
+          type: string
+          nullable: true
+        gatewayResponse:
+          type: string
+          nullable: true
+      additionalProperties: false
+    ShippingMethod:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        price:
+          type: integer
+          format: int32
+        externalId:
+          type: string
+          nullable: true
+      additionalProperties: false
+    ShippingMethodsResponse:
+      type: object
+      properties:
+        shippingMethods:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/ShippingMethod'
+        preferredShippingMethodId:
+          type: string
+          nullable: true
+      additionalProperties: false
+    Description:
+      type: object
+      properties:
+        totalRecords:
+          type: integer
+          format: int32
+          readOnly: true
+        totalPages:
+          type: integer
+          format: int32
+          readOnly: true
+        pageNumber:
+          type: integer
+          format: int32
+          readOnly: true
+        pageSize:
+          type: integer
+          format: int32
+          readOnly: true
+      additionalProperties: false
+    Links:
+      type: object
+      properties:
+        previousPage:
+          type: string
+          nullable: true
+          readOnly: true
+        nextPage:
+          type: string
+          nullable: true
+          readOnly: true
+        firstPage:
+          type: string
+          nullable: true
+          readOnly: true
+        lastPage:
+          type: string
+          nullable: true
+          readOnly: true
+      additionalProperties: false
+    TransactionStatus:
+      type: string
+      enum:
+      - SUCCESS
+      - FAILURE
+    TransactionType:
+      type: string
+      enum:
+      - SALE
+      - AUTHORIZATION
+      - FULL_CAPTURE
+      - PARTIAL_CAPTURE
+      - FULL_VOID
+      - PARTIAL_VOID
+      - FULL_REVERSAL
+      - PARTIAL_REVERSAL
+      - FULL_REFUND
+      - PARTIAL_REFUND
+      - SYSTEM_REVERSAL
+      - POINTS_RESERVATION
+    OrderStatus:
+      type: string
+      enum:
+      - PENDING
+      - PROCESSED
+      - ERROR
+      - CANCELLED
+    SettlementType:
+      type: string
+      enum:
+      - Sale
+      - AuthCapture
+    OrderDTOBase:
+      type: object
+      properties:
+        externalId:
+          type: string
+          nullable: true
+        total:
+          type: integer
+          format: int32
+        subtotal:
+          type: integer
+          format: int32
+        tax:
+          type: integer
+          format: int32
+          nullable: true
+        shipping:
+          type: integer
+          format: int32
+          nullable: true
+        tip:
+          type: integer
+          format: int32
+          nullable: true
+        cashAmount:
+          type: integer
+          format: int32
+        pointsAmount:
+          type: integer
+          format: int32
+          nullable: true
+        totalPoints:
+          type: integer
+          format: int32
+          nullable: true
+        orderDescription:
+          type: string
+          nullable: true
+        metadata:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        settlementType:
+          $ref: '#/components/schemas/SettlementType'
+        lastProcessingAttempt:
+          type: string
+          format: date-time
+          nullable: true
+        currencyCode:
+          type: string
+          nullable: true
+        hash:
+          type: string
+          nullable: true
+        merchantOrderId:
+          type: string
+          nullable: true
+        customerId:
+          type: string
+          nullable: true
+        paymentId:
+          type: string
+          nullable: true
+        addressId:
+          type: string
+          nullable: true
+        shippingAddressId:
+          type: string
+          nullable: true
+        shippingMethodId:
+          type: string
+          nullable: true
+        merchantId:
+          type: string
+          nullable: true
+      additionalProperties: false
+    OrderDTOBasePagedResponse:
+      type: object
+      properties:
+        description:
+          $ref: '#/components/schemas/Description'
+        links:
+          $ref: '#/components/schemas/Links'
+        data:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/OrderDTOBase'
+      additionalProperties: false
+    CreateLineItemInput:
+      required:
+      - sku
+      type: object
+      properties:
+        sku:
+          type: string
+        description:
+          type: string
+          nullable: true
+        amount:
+          type: integer
+          format: int32
+          nullable: true
+        category:
+          type: string
+          nullable: true
+      additionalProperties: false
+    CreateOrderInput:
+      required:
+      - merchantId
+      - orderDescription
+      - orderId
+      - subtotal
+      type: object
+      properties:
+        orderId:
+          type: string
+        merchantId:
+          type: string
+        customerId:
+          type: string
+          nullable: true
+        subtotal:
+          type: integer
+          format: int32
+        tax:
+          type: integer
+          format: int32
+          nullable: true
+        shipping:
+          type: integer
+          format: int32
+          nullable: true
+        currencyCode:
+          type: string
+          nullable: true
+        orderDescription:
+          type: string
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+        lineItems:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/CreateLineItemInput'
+      additionalProperties: false
+    OrderAddress:
+      type: object
+      properties:
+        firstName:
+          type: string
+          nullable: true
+        lastName:
+          type: string
+          nullable: true
+        company:
+          type: string
+          nullable: true
+        address1:
+          type: string
+          nullable: true
+        address2:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        zip:
+          type: string
+          nullable: true
+        externalId:
+          type: string
+          nullable: true
+      additionalProperties: false
+    OrderLineItem:
+      type: object
+      properties:
+        sku:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        amount:
+          type: integer
+          format: int32
+          nullable: true
+        category:
+          type: string
+          nullable: true
+        externalId:
+          type: string
+          nullable: true
+      additionalProperties: false
+    Transaction:
+      type: object
+      properties:
+        gatewayTransactionId:
+          type: string
+          nullable: true
+        amount:
+          type: integer
+          format: int32
+          nullable: true
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        orderId:
+          type: string
+          nullable: true
+          readOnly: true
+        externalId:
+          type: string
+          nullable: true
+      additionalProperties: false
+    Order:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int32
+        subtotal:
+          type: integer
+          format: int32
+        pointsAmount:
+          type: integer
+          format: int32
+          nullable: true
+        totalPoints:
+          type: integer
+          format: int32
+          nullable: true
+        tax:
+          type: integer
+          format: int32
+          nullable: true
+        shipping:
+          type: integer
+          format: int32
+          nullable: true
+        tip:
+          type: integer
+          format: int32
+          nullable: true
+        currencyCode:
+          type: string
+          nullable: true
+        merchantOrderId:
+          type: string
+          nullable: true
+        orderDescription:
+          type: string
+          nullable: true
+        metadata:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        lastProcessingAttempt:
+          type: string
+          format: date-time
+          nullable: true
+        customerId:
+          type: string
+          nullable: true
+          readOnly: true
+        paymentId:
+          type: string
+          nullable: true
+          readOnly: true
+        addressId:
+          type: string
+          nullable: true
+          readOnly: true
+        shippingAddress:
+          $ref: '#/components/schemas/OrderAddress'
+        shippingAddressId:
+          type: string
+          nullable: true
+          readOnly: true
+        shippingMethod:
+          $ref: '#/components/schemas/ShippingMethod'
+        shippingMethodId:
+          type: string
+          nullable: true
+          readOnly: true
+        merchantId:
+          type: string
+          nullable: true
+          readOnly: true
+        cashAmount:
+          type: integer
+          format: int32
+          readOnly: true
+        orderLineItems:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/OrderLineItem'
+        transactions:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Transaction'
+        storeId:
+          type: string
+          nullable: true
+        hash:
+          type: string
+          nullable: true
+          readOnly: true
+        externalId:
+          type: string
+          nullable: true
+      additionalProperties: false
+    TipPercentage:
+      type: object
+      properties:
+        percent:
+          type: integer
+          format: int32
+          readOnly: true
+        amount:
+          type: integer
+          format: int32
+          readOnly: true
+      additionalProperties: false
+    OrderLineItemDTO:
+      type: object
+      properties:
+        sku:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        amount:
+          type: integer
+          format: int32
+          nullable: true
+        category:
+          type: string
+          nullable: true
+        externalId:
+          type: string
+          nullable: true
+      additionalProperties: false
+    OrderDTO:
+      type: object
+      properties:
+        tipPercentages:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/TipPercentage'
+        transactions:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Transaction'
+        orderLineItems:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/OrderLineItemDTO'
+        externalId:
+          type: string
+          nullable: true
+        total:
+          type: integer
+          format: int32
+        subtotal:
+          type: integer
+          format: int32
+        tax:
+          type: integer
+          format: int32
+          nullable: true
+        shipping:
+          type: integer
+          format: int32
+          nullable: true
+        tip:
+          type: integer
+          format: int32
+          nullable: true
+        cashAmount:
+          type: integer
+          format: int32
+        pointsAmount:
+          type: integer
+          format: int32
+          nullable: true
+        totalPoints:
+          type: integer
+          format: int32
+          nullable: true
+        orderDescription:
+          type: string
+          nullable: true
+        metadata:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        settlementType:
+          $ref: '#/components/schemas/SettlementType'
+        lastProcessingAttempt:
+          type: string
+          format: date-time
+          nullable: true
+        currencyCode:
+          type: string
+          nullable: true
+        hash:
+          type: string
+          nullable: true
+        merchantOrderId:
+          type: string
+          nullable: true
+        customerId:
+          type: string
+          nullable: true
+        paymentId:
+          type: string
+          nullable: true
+        addressId:
+          type: string
+          nullable: true
+        shippingAddressId:
+          type: string
+          nullable: true
+        shippingMethodId:
+          type: string
+          nullable: true
+        merchantId:
+          type: string
+          nullable: true
+      additionalProperties: false
+    UpdateOrderInput:
+      type: object
+      properties:
+        Total:
+          type: integer
+          format: int32
+          nullable: true
+        subtotal:
+          type: integer
+          format: int32
+          nullable: true
+        tax:
+          type: integer
+          format: int32
+          nullable: true
+        shipping:
+          type: integer
+          format: int32
+          nullable: true
+        tip:
+          type: integer
+          format: int32
+          nullable: true
+        currencyCode:
+          type: string
+          nullable: true
+        orderDescription:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          nullable: true
+        customerId:
+          type: string
+          nullable: true
+        shippingMethodId:
+          type: string
+          nullable: true
+      additionalProperties: false
+    RefundRequest:
+      type: object
+      properties:
+        amount:
+          type: integer
+          format: int32
+          nullable: true
+          deprecated: true
+        refundAmount:
+          type: integer
+          format: int32
+          nullable: true
+      additionalProperties: false
+    BaseResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          readOnly: true
+        errorCode:
+          type: string
+          nullable: true
+        gatewayTransactionId:
+          type: string
+          nullable: true
+        gatewayResponse:
+          type: string
+          nullable: true
+      additionalProperties: false
+    OrderCaptureRequest:
+      type: object
+      properties:
+        CaptureAmount:
+          type: integer
+          format: int32
+          nullable: true
+        CompleteOrder:
+          type: boolean
+          nullable: true
+      additionalProperties: false
+    VoidRequest:
+      type: object
+      properties:
+        amount:
+          type: integer
+          format: int32
+          nullable: true
+          deprecated: true
+        voidAmount:
+          type: integer
+          format: int32
+          nullable: true
+      additionalProperties: false
+    ReversalRequest:
+      type: object
+      properties:
+        Amount:
+          type: integer
+          format: int32
+      additionalProperties: false
+    OrderPaymentRequest:
+      type: object
+      properties:
+        orderId:
+          type: string
+          nullable: true
+        hash:
+          type: string
+          nullable: true
+        customerId:
+          type: string
+          nullable: true
+        paymentId:
+          type: string
+          nullable: true
+        addressId:
+          type: string
+          nullable: true
+        billingAddressId:
+          type: string
+          nullable: true
+        cvv:
+          type: string
+          nullable: true
+        storeId:
+          type: string
+          nullable: true
+      additionalProperties: false
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    Unauthorized:
+      description: Client is not authenticated.
+    Forbidden:
+      description: Client is not authorized to perform requested operation.
+    NotFoundDetail:
+      description: Not found with details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    NotFoundExceptional:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExceptionResponse'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/ExceptionResponse'
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    ClientError:
+      description: Client Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExceptionResponse'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/ExceptionResponse'
+    Default:
+      description: Unexpected response
+  parameters:
+    OrderIdPath:
+      name: orderId
+      in: path
+      description: External Order ID
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        nullable: false
+        example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+    OrderIdQuery:
+      name: orderId
+      in: query
+      description: External Order ID
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        nullable: true
+        example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+    PageSize:
+      name: pageSize
+      in: query
+      required: false
+      style: form
+      explode: true
+      schema:
+        maximum: 50
+        minimum: 1
+        type: integer
+        format: int32
+        default: 25
+    PageNumber:
+      name: pageNumber
+      in: query
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+        format: int32
+  securitySchemes:
+    Bearer:
+      type: http
+      description: "JWT Authorization header using the Bearer scheme. <br /><br />\r\
+        \n                      Enter the token value (without 'Bearer') in the text\
+        \ input below.\r\n                      <br /><br />Example: '12345abcdef'"
+      scheme: bearer
