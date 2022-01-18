@@ -475,9 +475,10 @@ paths:
     post:
       tags:
       - Single Order
-      summary: Submit a payment request for the given customer and payment token
-      description: "JWT Required: Customer\r\n<br>Authorization Policy: IP Address\r\
-        \n<br>CORS Policy: Button\r\n<br></para>\r\n<para>"
+      summary: Submit a payment request
+      description: "Submit a payment request for the given customer and payment token.<br>JWT\
+        \ Required: Customer\r\n<br>Authorization Policy: IP Address\r\n<br>CORS Policy:\
+        \ Button\r\n<br></para>\r\n<para>"
       parameters:
       - name: orderId
         in: path
@@ -552,7 +553,7 @@ paths:
     get:
       tags:
       - Single Order
-      summary: Get an order's shipping and tax info.
+      summary: Get an order's shipping/tax info
       description: Gets Shipping and Tax information from Merchant's ShippingAndTax
         Callback
       parameters:
