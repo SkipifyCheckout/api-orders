@@ -104,6 +104,7 @@ paths:
           description: Client is not authenticated.
         default:
           description: Unexpected response
+      security: []
     post:
       tags:
       - Single Order
