@@ -58,6 +58,38 @@ paths:
         schema:
           type: integer
           format: int32
+      - name: timestamp
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          nullable: false
+      - name: nonce
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          nullable: false
+      - name: x-merchant-id
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          nullable: false
+      - name: signature
+        in: header
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          nullable: false
       responses:
         "200":
           description: Success
@@ -1469,6 +1501,42 @@ components:
     Default:
       description: Unexpected response
   parameters:
+    HmacTimestampHeader:
+      name: timestamp
+      in: header
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+        nullable: false
+    HmacNonceHeader:
+      name: nonce
+      in: header
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        nullable: false
+    HmacMerchantIdHeader:
+      name: x-merchant-id
+      in: header
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        nullable: false
+    HmacSignatureHeader:
+      name: signature
+      in: header
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        nullable: false
     OrderIdPath:
       name: orderId
       in: path
