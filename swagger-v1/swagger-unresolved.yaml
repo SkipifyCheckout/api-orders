@@ -1,0 +1,32 @@
+openapi: 3.0.1
+info:
+  title: Order API
+  version: 1.0.0
+  description: >-
+    API used for managing order data. Operations such as creating a new order,
+    voiding, and refunding can be found here. Unless otherwise specified,
+    each of these endpoints requires the user to be authenticated with a 
+    merchant's HMAC token.
+  license:
+    name: MIT
+    url: 'https://github.com/GoCartPay/gocart-java-sdk/blob/main/LICENSE'
+  contact:
+    email: 'test@example.com'
+    
+servers: 
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.0
+  - description: Staging Environment
+    url: https://api-staging.gocartpay.com
+  - description: Production Environment
+    url: https://api.gocartpay.com/
+paths:
+
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      description: "JWT Authorization header using the Bearer scheme. <br /><br />\r\n                      Enter the token value (without 'Bearer') in the text input below.\r\n                      <br /><br />Example: '12345abcdef'"
+      scheme: bearer
+security:
+  - Bearer: []
