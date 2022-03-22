@@ -21,7 +21,16 @@ servers:
   - description: Production Environment
     url: https://api.gocartpay.com/
 paths:
-
+  /orders:
+    get:
+      tags:
+        - Order
+      summary: Temp Placeholder
+      description: "No public APIs exposed yet, so this endpoint is strictly here as a temp placeholder."
+      responses:
+        '200':
+          description: Success
+          
 components:
   securitySchemes:
     Bearer:
