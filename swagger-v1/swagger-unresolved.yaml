@@ -463,10 +463,14 @@ components:
         gatewayTransactionId:
           type: string
           nullable: true
+          description: "The payment gateway's transaction id."
+          example: "GC-29292383"
         amount:
           type: integer
-          format: int32
+          format: cents
+          description: "The amount processed in the transaction in cents (e.g., $1.00 -> 100)"
           nullable: true
+          example: 10000
         type:
           $ref: '#/components/schemas/TransactionType'
         status:
@@ -474,13 +478,19 @@ components:
         approvalCode:
           type: string
           nullable: true
+          description: "The approval code received from the payment gateway."
         orderId:
           type: string
+          format: uuid
           nullable: true
           readOnly: true
+          example: "a7cc003b-07ac-4d4a-a830-46718ff3be8f"
         externalId:
           type: string
+          format: uuid
+          description: "The unique identifier for this transaction in GoCart."
           nullable: true
+          example: "26fb916a-9a88-46cc-abbe-c2873e263ae8"
       additionalProperties: false
       
     OrderWithDetails:
