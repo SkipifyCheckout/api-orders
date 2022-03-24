@@ -97,34 +97,6 @@ paths:
             application/json:
               schema:
                 $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
-    put:
-      tags:
-        - Order
-      summary: Updates an order (internal)
-      description: |
-        Retrieve the specified order.
-        
-        This method is not externally exposed at this point. Prior to doing so, the payload should be adjusted to align with our go forward strategy.
-        
-        A valid **JWT** is required to access this endpoint.
-      parameters:
-        - $ref: '#/components/parameters/OrderIdPathParameter'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateOrderInput'
-      responses:
-        "204":
-          description: |
-            Successfully processed the request
-        default:
-          description: |
-            Standard error response codes are returned by this service method.
-          content:
-            application/json:
-              schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
                 
   /orders/{orderId}/refund:
     post:
@@ -286,66 +258,9 @@ paths:
             application/json:
               schema:
                 $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
-  
-  /orders/{orderId}/shipping-methods/{shippingAddressId}:
-    get:
-      tags:
-        - Order
-      summary: Gets Shipping and Tax information from Merchant's ShippingAndTax Callback
-      description: |
-        As a customer interacts with the GoCart wallet during checkout, they can make adjustments to the shipping address for the order. This can have an impact on any shipping and/or tax calculations for the order in scope. GoCart mangages the calculation of shipping and tax using a `delegated callback` framework. 
-        
-        Workflow:
-          1. User chooses a shipping address in the GoCart modal
-          2. GoCart web application makes a remote call back to the GoCart web service to recalc shipping and tax
-          3. GoCart backend orchestrates a delegated callback to the merchant's shipping and tax calculation service
-          4. Results are routed back from merchant through the GoCart backend and to the customer's browser.
-      parameters:
-        - $ref: '#/components/parameters/OrderIdPathParameter'
-        - $ref: '#/components/parameters/ShippingAddressIdPathParameter'
-        - $ref: '#/components/parameters/ShippingCalcUrlQueryParameter'
-        - $ref: '#/components/parameters/TaxCalcUrlQueryParameter'
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ShippingMethodsResponse'
-        default:
-          description: |
-            Standard error response codes are returned by this service method.
-          content:
-            application/json:
-              schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
           
 components:
   parameters:
-    ShippingCalcUrlQueryParameter:
-      name: base64ShippingUrl
-      in: query
-      description: |
-        Only used for legacy GoCart integrations. This should **NOT** be used for modern integrations.
-        
-        Represents the URL endpoint for the merchant's shipping calculator as a base 64 string
-      schema:
-        type: string
-        format: base64
-        description: The shipping calculator URL as a base 64 string
-        nullable: true
-    TaxCalcUrlQueryParameter:
-      name: base64TaxUrl
-      in: query
-      description: |
-        Only used for legacy GoCart integrations. This should **NOT** be used for modern integrations.
-        
-        Represents the URL endpoint for the merchant's tax calculator as a base 64 string
-      schema:
-        type: string
-        format: base64
-        description: The tax calculator URL as a base 64 string
-        nullable: true
     OrderIdQueryParameter:
       name: orderId
       in: query
@@ -966,77 +881,6 @@ components:
             The amount to be reversed on the order in cents format (e.g., $1.00 -> 100)
           example: 10000
       additionalProperties: false
-      
-    ShippingMethod:
-      type: object
-      properties:
-        name:
-          type: string
-          example: "UPS Two Day Air"
-        price:
-          type: number
-          format: float
-          description: "The price for this shipping method." 
-          minimum: 0
-          example: 9.99
-        tax:
-          type: number
-          format: float
-          description: |
-            The tax associated with this shipping method.
-            
-            This exists as based on certain shipping methods, like a merchant adding an in store pickup shipping method, the tax may be different than if the customer has the item shipped to their home address.
-          example: 7.12
-        externalId:
-          type: string
-          format: uuid
-          description: "The shipping method id."
-          example: "54f85467-fe63-42ee-9155-faa5d12728e1"
-      additionalProperties: false
-      
-    UpdateOrderInput:
-      type: object
-      properties:
-        Total:
-          type: integer
-          format: cents
-          description: "The order total in cents format (e.g., $1.00 -> 100)"
-          nullable: true
-          example: 10000
-        tip:
-          type: integer
-          format: cents
-          description: "The order total in cents format (e.g., $1.00 -> 100)"
-          nullable: true
-          example: 100
-        orderDescription:
-          type: string
-          nullable: true
-        metadata:
-          type: object
-          additionalProperties:
-            type: string
-          nullable: true
-        customerId:
-          type: string
-          nullable: true
-        shippingMethodId:
-          type: string
-          nullable: true
-      additionalProperties: false
-      
-    ShippingMethodsResponse:
-      type: object
-      properties:
-        shippingMethods:
-          type: array
-          items:
-            $ref: '#/components/schemas/ShippingMethod'
-          nullable: true
-        preferredShippingMethodId:
-          type: string
-          nullable: true
-      additionalProperties: false      
         
   securitySchemes:
     Bearer:
