@@ -1,15 +1,13 @@
 openapi: 3.0.1
 info:
   title: Order API
-  description: "API used for managing order data. Operations such as creating a new\
-    \ order, voiding, and refunding can be found here. Unless otherwise specified,\
-    \ each of these endpoints requires the user to be authenticated with a  merchant's\
-    \ HMAC token."
-  contact:
-    email: test@example.com
+  description: "API used for managing GoCart orders. \n\nOperations such as creating\
+    \ a new order, voiding, and refunding can be found here. \n\nUnless otherwise\
+    \ specified, each of these endpoints requires the user to be authenticated with\
+    \ a merchant's HMAC token or JWT.\n"
   license:
-    name: MIT
-    url: https://github.com/GoCartPay/gocart-java-sdk/blob/main/LICENSE
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 servers:
 - url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.0
@@ -20,19 +18,1016 @@ servers:
   description: Production Environment
 security:
 - Bearer: []
+tags:
+- name: Order
+  description: |
+    Core order related API service methods.
 paths:
   /orders:
     get:
       tags:
       - Order
-      summary: Temp Placeholder
-      description: "No public APIs exposed yet, so this endpoint is strictly here\
-        \ as a temp placeholder."
+      summary: Retrieve a paginated summary of orders filtered based on querystring
+        parameters.
+      description: |
+        Retrieve a paginated summary of orders filtered based on querystring parameters.
+
+        A valid **HMAC** is required to access this endpoint.
+      parameters:
+      - name: orderId
+        in: query
+        description: |
+          The unique identifier for the order in the context of GoCart.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          format: uuid
+          example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+      - name: pageSize
+        in: query
+        description: |
+          The number of items per page
+        required: false
+        schema:
+          maximum: 50
+          minimum: 1
+          type: integer
+          example: 25
+          default: 25
+      - name: pageNumber
+        in: query
+        description: |
+          The page number to fetch
+        required: false
+        schema:
+          minimum: 1
+          type: integer
+          example: 1
+          default: 1
       responses:
         "200":
           description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderSummariesPagedResponse'
+        default:
+          description: |
+            Standard error response codes are returned by this service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+    post:
+      tags:
+      - Order
+      summary: Creates an order
+      description: |
+        Creates an order.
+
+        A valid **JWT** is required to access this endpoint.
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderWithOrderLinesBase'
+      responses:
+        "201":
+          description: "[201] The request succeeded and a new resource was created.\n\
+            The identity for the resource created is included in the response **Location**\
+            \ header.\n"
+        default:
+          description: |
+            Standard error response codes are returned by this service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+  /orders/{orderId}:
+    get:
+      tags:
+      - Order
+      summary: Retrieves an order
+      description: |
+        Retrieve the specified order.
+
+        A valid **JWT** or **HMAC** is required to access this endpoint.
+      parameters:
+      - name: orderId
+        in: path
+        description: |
+          The unique identifier for the order.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uuid
+          example: dc14ae4c-3d8a-4d0d-8682-02d01befd57c
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderWithDetails'
+        default:
+          description: |
+            Standard error response codes are returned by this service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+  /orders/{orderId}/refund:
+    post:
+      tags:
+      - Order
+      summary: Refunds an order
+      description: |
+        Issues a request to refund a portion or the entire order.
+      parameters:
+      - name: orderId
+        in: path
+        description: |
+          The unique identifier for the order.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uuid
+          example: dc14ae4c-3d8a-4d0d-8682-02d01befd57c
+      requestBody:
+        description: Refund Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRefundRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+        default:
+          description: |
+            Standard error response codes are returned by this service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+  /orders/{orderId}/capture:
+    post:
+      tags:
+      - Order
+      summary: Captures an order
+      parameters:
+      - name: orderId
+        in: path
+        description: |
+          The unique identifier for the order.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uuid
+          example: dc14ae4c-3d8a-4d0d-8682-02d01befd57c
+      requestBody:
+        description: Order Capture request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCaptureRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+        default:
+          description: |
+            Standard error response codes are returned by this service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+  /orders/{orderId}/void:
+    post:
+      tags:
+      - Order
+      summary: Voids an order
+      parameters:
+      - name: orderId
+        in: path
+        description: |
+          The unique identifier for the order.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uuid
+          example: dc14ae4c-3d8a-4d0d-8682-02d01befd57c
+      requestBody:
+        description: Void Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderVoidRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+        default:
+          description: |
+            Standard error response codes are returned by this service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+  /orders/{orderId}/reverse:
+    post:
+      tags:
+      - Order
+      summary: Refunds an order
+      description: "<br>JWT Required: Merchant\r\n<br>Authorization Policy: IP Address\r\
+        \n<br>Roles: Super Admin\r\n<br>CORS Policy: Merchant Portal"
+      parameters:
+      - name: orderId
+        in: path
+        description: |
+          The unique identifier for the order.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uuid
+          example: dc14ae4c-3d8a-4d0d-8682-02d01befd57c
+      requestBody:
+        description: Reversal Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderReversalRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResult'
+        default:
+          description: |
+            Standard error response codes are returned by this service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+  /orders/{orderId}/pay:
+    post:
+      tags:
+      - Order
+      summary: Submit a payment request for the given customer and payment token
+      description: "Submits a payment request to the payment gateway.\n\nA valid **JWT**\
+        \ is required to access this endpoint.\n\nPayment error response codes:\n\
+        \  - 900: Card was declined\n  - 991: Card is expired\n  - 992: There was\
+        \ a problem communicating with the network\n  - 993: Transaction pending\n\
+        \  - 994: System error\n  - 995: Unable to process card\n  - 996: Unable to\
+        \ process the order\n  - 998: Internal payment gateway error\n  - 999: Internal\
+        \ payment gateway error\n  - 1000: Internal payment gateway error\n  - 1001:\
+        \ Token Management System Error\n  - -1: Unknown error\n"
+      parameters:
+      - name: orderId
+        in: path
+        description: |
+          The unique identifier for the order.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uuid
+          example: dc14ae4c-3d8a-4d0d-8682-02d01befd57c
+      requestBody:
+        description: Order Payment request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderPaymentRequest'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderPaymentResult'
+        default:
+          description: |
+            Standard error response codes are returned by this service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
 components:
-  schemas: {}
+  schemas:
+    BaseResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+          readOnly: true
+          example: true
+        errorCode:
+          type: string
+          description: A GoCart error code.
+          nullable: true
+          example: "900"
+        gatewayTransactionId:
+          type: string
+          description: The transaction id as for the payment gateway that processed
+            the payment.
+          nullable: true
+          example: "123456789"
+        gatewayResponse:
+          type: string
+          description: The raw response from the payment gateway that processed the
+            payment.
+          nullable: true
+          example: Some payload that should not be used to drive merchant business
+            logic!!
+      additionalProperties: false
+    OrderLineBase:
+      required:
+      - sku
+      type: object
+      properties:
+        sku:
+          type: string
+          format: sku
+          example: UGG-BB-PUR-06
+        description:
+          type: string
+          description: The description for the line item.
+          example: Purple Ugg boots in the Bailey Bow style
+        amount:
+          type: integer
+          description: The amount for the line item (in USD cents).
+          format: cents
+          example: 9999
+        category:
+          type: string
+          example: Footwear
+      additionalProperties: false
+    OrderBase:
+      required:
+      - merchantId
+      - orderDescription
+      - orderId
+      - subtotal
+      type: object
+      properties:
+        orderId:
+          type: string
+          description: The merchant's order identifier.
+          example: ORDER-1234XX
+        merchantId:
+          type: string
+          description: The unique GoCart identifier for the merchant.
+          format: uuid
+          example: d4916e8d-006f-4ed2-b321-e14cc7ac8e41
+        customerId:
+          type: string
+          description: The unique GoCart identifier for the customer.
+          format: uuid
+          nullable: true
+          example: 3be646f8-563c-4efa-b9d1-2a43f96c38a2
+        subtotal:
+          type: integer
+          description: "The order subtotal in cents format (e.g., $1.00 -> 100)"
+          format: cents
+          example: 9000
+        tax:
+          type: integer
+          description: "The order tax amount in cents format (e.g., $1.00 -> 100)"
+          format: cents
+          nullable: true
+          example: 700
+        shipping:
+          type: integer
+          description: "The order shipping amount in cents format (e.g., $1.00 ->\
+            \ 100)"
+          format: cents
+          example: 300
+        currencyCode:
+          type: string
+          description: The currency for this order in ISO 4217 format.
+          format: iso4217
+          example: USD
+        orderDescription:
+          type: string
+          description: A general description for the order.
+          example: A wonderful order of stuff.
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: |
+            A property where a merchant can store data of their chose. No sensitive data of any type should be stored in metadata.
+          nullable: true
+          example: "{\"someKey\": \"someValue\", \"someOtherKey\": \"someOtherValue\"\
+            }"
+      additionalProperties: false
+    OrderWithOrderLinesBase:
+      type: object
+      properties:
+        lineItems:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/OrderLineBase'
+      description: |
+        A composite of order base details and order lines .. all without identities for the order and orderlines.
+      allOf:
+      - $ref: '#/components/schemas/OrderBase'
+    TipPercentage:
+      type: object
+      properties:
+        percent:
+          maximum: 100
+          minimum: 0
+          type: integer
+          description: "A tip percentage (e.g., 5% -> 5)"
+          format: percentage
+          readOnly: true
+          example: 5
+        amount:
+          type: integer
+          description: The calculated tip monetary amount (percentage x order total).
+          format: cents
+          readOnly: true
+          example: 100
+      additionalProperties: false
+    TransactionType:
+      type: string
+      description: Transaction type options.
+      enum:
+      - SALE
+      - AUTHORIZATION
+      - FULL_CAPTURE
+      - PARTIAL_CAPTURE
+      - FULL_VOID
+      - PARTIAL_VOID
+      - FULL_REVERSAL
+      - PARTIAL_REVERSAL
+      - FULL_REFUND
+      - PARTIAL_REFUND
+      - SYSTEM_REVERSAL
+      - POINTS_RESERVATION
+      - POINTS_RELEASE
+    TransactionStatus:
+      type: string
+      description: Transaction status options.
+      enum:
+      - SUCCESS
+      - FAILURE
+    Transaction:
+      type: object
+      properties:
+        gatewayTransactionId:
+          type: string
+          description: The payment gateway's transaction id.
+          nullable: true
+          example: GC-29292383
+        amount:
+          type: integer
+          description: "The amount processed in the transaction in cents (e.g., $1.00\
+            \ -> 100)"
+          format: cents
+          nullable: true
+          example: 10000
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        approvalCode:
+          type: string
+          description: The approval code received from the payment gateway.
+          nullable: true
+        orderId:
+          type: string
+          format: uuid
+          nullable: true
+          readOnly: true
+          example: a7cc003b-07ac-4d4a-a830-46718ff3be8f
+        externalId:
+          type: string
+          description: The unique identifier for this transaction in GoCart.
+          format: uuid
+          nullable: true
+          example: 26fb916a-9a88-46cc-abbe-c2873e263ae8
+      additionalProperties: false
+      description: Transaction details - associated with payments for an order.
+    OrderWithDetails:
+      type: object
+      properties:
+        tipPercentages:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/TipPercentage'
+        transactions:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Transaction'
+        orderLineItems:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/OrderWithDetails_orderLineItems'
+      allOf:
+      - $ref: '#/components/schemas/Order'
+    Order:
+      type: object
+      properties:
+        externalId:
+          type: string
+          description: |
+            The unique identifier for this order.
+
+            This variable is deprecated. Use `id` as the go forward identifier for the order.
+          format: uuid
+          example: 37ff55b6-34c0-40b1-8b75-fd1dbdbdb4c8
+        total:
+          type: integer
+          description: "The order total in cents format (e.g., $1.00 -> 100)"
+          format: int32
+          example: 10000
+        subtotal:
+          type: integer
+          description: "The order subtotal in cents format (e.g., $1.00 -> 100)"
+          format: int32
+          example: 9000
+        tax:
+          type: integer
+          description: "The order tax amount in cents format (e.g., $1.00 -> 100)"
+          format: int32
+          nullable: true
+          example: 700
+        shipping:
+          type: integer
+          description: "The order shipping amount in cents format (e.g., $1.00 ->\
+            \ 100)"
+          format: int32
+          example: 300
+        tip:
+          type: integer
+          description: "The tip amount selected by the customer in cents format (e.g.,\
+            \ $1.00 -> 100)"
+          format: cents
+          example: 0
+        cashAmount:
+          type: integer
+          description: "The order total in cents format (e.g., $1.00 -> 100)"
+          format: int32
+        pointsAmount:
+          minimum: 0
+          type: integer
+          description: "The cash value of the point. This represents a cash equivalent\
+            \ value for the total points. \n\nThis is the value that gets passed to\
+            \ payment gateways.\n"
+          format: cents
+          nullable: true
+          example: 10000
+        totalPoints:
+          minimum: 0
+          type: integer
+          description: |
+            How many points are being redeemed to pay for this order.
+          nullable: true
+          example: 1000000
+        orderDescription:
+          type: string
+          description: The description of the order.
+          example: Online Order
+        metadata:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        settlementType:
+          $ref: '#/components/schemas/SettlementType'
+        lastProcessingAttempt:
+          type: string
+          format: date-time
+        currencyCode:
+          type: string
+          example: USD
+        hash:
+          type: string
+          example: 13e864a1444dbe6a61b6acb5775b61db535072cfb999bf33459ede23867895e3
+        merchantOrderId:
+          type: string
+          example: Order123-ONLINE
+        customerId:
+          type: string
+          description: The unique identifier of the customer making the payment.
+          format: uuid
+          example: 8de1972d-4898-4e96-b93f-7305507d599b
+        paymentId:
+          type: string
+          description: The unique identifier of the selected customer's payment method.
+          format: uuid
+          example: da59a90c-c143-4688-bb95-412aa4cd6077
+        addressId:
+          type: string
+          description: The unique identifier of the customer's billing address.
+          format: uuid
+          example: 43c98679-cf02-48d4-9784-6022870d7e3f
+        shippingAddressId:
+          type: string
+          description: The unique identifier of the customer's shipping address.
+          format: uuid
+          example: 5e46603f-b77c-4e99-b02e-3b9a3fe449f4
+        shippingMethodId:
+          type: string
+          description: The unique identifier of the customer's selected shipping method.
+          format: uuid
+          example: 0ded3708-8218-48f4-bd8c-2116bd61435a
+        merchantId:
+          type: string
+          description: The unique identifier of the merchant.
+          format: uuid
+          example: 78f3e720-994d-4280-a036-db8116413537
+      additionalProperties: false
+    OrderStatus:
+      type: string
+      enum:
+      - PENDING
+      - PROCESSED
+      - ERROR
+      - CANCELLED
+    SettlementType:
+      type: string
+      enum:
+      - Sale
+      - AuthCapture
+    OrderSummariesPagedResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderBase'
+      additionalProperties: false
+      allOf:
+      - $ref: '#/components/schemas/PaginatedResponseBase'
+    OrderRefundRequest:
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: Use `refundAmount` in place of this property.
+          format: cents
+          example: 1000
+          deprecated: true
+        refundAmount:
+          type: integer
+          description: "The requested amount to be refunded in cents format (e.g.,\
+            \ $1.00 -> 100)"
+          format: cents
+          example: 1000
+      additionalProperties: false
+    OrderCaptureRequest:
+      type: object
+      properties:
+        CaptureAmount:
+          type: integer
+          description: "The amount to be captured for the order in cents format (e.g.,\
+            \ $1.00 -> 100)\n"
+          format: cents
+          nullable: true
+          example: 10000
+        CompleteOrder:
+          type: boolean
+          description: Used to set the order into a completed state or not.
+          nullable: true
+          example: true
+      additionalProperties: false
+    OrderPaymentRequest:
+      required:
+      - hash
+      type: object
+      properties:
+        hash:
+          type: string
+          description: |
+            A hash that is provided in the GET order. GoCart uses this to ensure the details presented to the customer are in alignment with the GoCart backend prior to submitting a payment.
+          nullable: true
+          example: UNHASHED
+        customerId:
+          type: string
+          description: The unique identifier for the customer making the payment.
+          format: uuid
+          nullable: true
+          example: 3d8e9e7a-c412-477c-9810-50dfd6937234
+        paymentId:
+          type: string
+          description: |
+            The unique identifier for the customer's selected payment method to be used to pay for the order.
+          format: uuid
+          nullable: true
+          example: 843f59c4-b737-4530-ab94-6b40c7aacdd0
+        billingAddressId:
+          type: string
+          description: The unique identifier for the customer's selected billing address.
+          format: uuid
+          nullable: true
+        cvv:
+          maxLength: 4
+          minLength: 3
+          type: string
+          description: "The payment card CVV (for PCI purposes, this value should\
+            \ NEVER be persisted or logged).\n"
+          format: cvv
+          nullable: true
+          example: "234"
+        storeId:
+          type: string
+          description: |
+            An identifier provided by the merchant that GoCart will echo back in the payment response.
+          nullable: true
+          example: Store123
+        pointsAmount:
+          minimum: 0
+          type: integer
+          description: "The cash value of the point. This represents a cash equivalent\
+            \ value for the total points. \n\nThis is the value that gets passed to\
+            \ payment gateways.\n"
+          format: cents
+          nullable: true
+          example: 10000
+        totalPoints:
+          minimum: 0
+          type: integer
+          description: |
+            How many points are being redeemed to pay for this order.
+          nullable: true
+          example: 1000000
+      additionalProperties: false
+    PaymentStatus:
+      type: string
+      description: Payment status options.
+      enum:
+      - AUTHORIZED
+      - CAPTURED
+      - ERROR
+      - VOIDED
+    PaymentResultError:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          description: The error code
+          nullable: true
+          example: "900"
+        errorDescription:
+          type: string
+          description: A description of the error
+          nullable: true
+          example: Card was declined
+        detailedErrorCode:
+          type: string
+          description: TODO
+          nullable: true
+          example: "900"
+        detailedErrorDescription:
+          type: string
+          description: TODO
+          nullable: true
+          example: Detailed error description of some form.
+      additionalProperties: false
+      description: Container for error details related to a payment request.
+    AVSStatus:
+      type: string
+      description: Address Verification Service statuses.
+      enum:
+      - Match
+      - PartialMatch
+      - NoMatch
+      - NotSupported
+      - Omitted
+      - Error
+    AVSResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/AVSStatus'
+        gatewayCode:
+          type: string
+          nullable: true
+          readOnly: true
+          deprecated: true
+      additionalProperties: false
+      description: Container for AVS check response status.
+    CVVStatus:
+      type: string
+      description: Card Verification Value statuses.
+      enum:
+      - Match
+      - NoMatch
+      - NotProcessed
+      - Omitted
+      - Error
+    CVVResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/CVVStatus'
+        gatewayCode:
+          type: string
+          nullable: true
+          readOnly: true
+          deprecated: true
+      additionalProperties: false
+      description: Container for CVV check response status.
+    OrderPaymentResult:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        error:
+          $ref: '#/components/schemas/PaymentResultError'
+        avsResponse:
+          $ref: '#/components/schemas/AVSResponse'
+        cvvResponse:
+          $ref: '#/components/schemas/CVVResponse'
+        networkTransactionId:
+          type: string
+          nullable: true
+        pointsReservationId:
+          type: string
+          nullable: true
+        gatewayTransactionId:
+          type: string
+          nullable: true
+        gatewayResponse:
+          type: string
+          nullable: true
+      additionalProperties: false
+    OrderVoidRequest:
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: Use `voidAmount` in place of this property.
+          format: cents
+          nullable: true
+          example: 10000
+          deprecated: true
+        voidAmount:
+          type: integer
+          description: "The amount to be voided for the order in cents format (e.g.,\
+            \ $1.00 -> 100)\n"
+          format: cents
+          nullable: true
+          example: 10000
+      additionalProperties: false
+    OrderReversalRequest:
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: "The amount to be reversed on the order in cents format (e.g.,\
+            \ $1.00 -> 100)\n"
+          format: cents
+          example: 10000
+      additionalProperties: false
+    ExceptionResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          nullable: true
+          readOnly: true
+      additionalProperties: false
+    PaginatedResponseBase:
+      type: object
+      properties:
+        description:
+          $ref: '#/components/schemas/PaginatedDescription'
+        links:
+          $ref: '#/components/schemas/Links'
+      additionalProperties: false
+      description: |
+        Base object for all GoCart paginated GET operations.
+    PaginatedDescription:
+      type: object
+      properties:
+        totalRecords:
+          minimum: 0
+          type: integer
+          format: int32
+          readOnly: true
+          example: 1223
+        totalPages:
+          minimum: 0
+          type: integer
+          format: int32
+          readOnly: true
+          example: 13
+        pageNumber:
+          minimum: 0
+          type: integer
+          format: int32
+          readOnly: true
+          example: 4
+        pageSize:
+          minimum: 0
+          type: integer
+          format: int32
+          readOnly: true
+          example: 50
+      additionalProperties: false
+    Links:
+      type: object
+      properties:
+        previousPage:
+          type: string
+          format: uri
+          nullable: true
+          readOnly: true
+        nextPage:
+          type: string
+          format: uri
+          nullable: true
+          readOnly: true
+        firstPage:
+          type: string
+          format: uri
+          nullable: true
+          readOnly: true
+        lastPage:
+          type: string
+          format: uri
+          nullable: true
+          readOnly: true
+      additionalProperties: false
+    OrderWithDetails_orderLineItems:
+      properties:
+        externalId:
+          type: string
+          description: The unique identifier of the order line.
+          format: uuid
+          example: 5e89fbdc-3381-4f29-913c-daf1ee785a60
+      example: null
+  parameters:
+    OrderIdQueryParameter:
+      name: orderId
+      in: query
+      description: |
+        The unique identifier for the order in the context of GoCart.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+        format: uuid
+        example: 3f326510-8fb0-4565-9de1-a090aaa49ac2
+    OrderIdPathParameter:
+      name: orderId
+      in: path
+      description: |
+        The unique identifier for the order.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        format: uuid
+        example: dc14ae4c-3d8a-4d0d-8682-02d01befd57c
+    ShippingAddressIdPathParameter:
+      name: shippingAddressId
+      in: path
+      description: |
+        The unique identifier for the shipping address.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+        format: uuid
+        example: abcdae4c-3d8a-4d0d-8682-02d01befd57c
   securitySchemes:
     Bearer:
       type: http
