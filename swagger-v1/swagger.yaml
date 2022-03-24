@@ -141,42 +141,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
-    put:
-      tags:
-      - Order
-      summary: Updates an order (internal)
-      description: "Retrieve the specified order.\n\nThis method is not externally\
-        \ exposed at this point. Prior to doing so, the payload should be adjusted\
-        \ to align with our go forward strategy.\n\nA valid **JWT** is required to\
-        \ access this endpoint.\n"
-      parameters:
-      - name: orderId
-        in: path
-        description: |
-          The unique identifier for the order.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: dc14ae4c-3d8a-4d0d-8682-02d01befd57c
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateOrderInput'
-      responses:
-        "204":
-          description: |
-            Successfully processed the request
-        default:
-          description: |
-            Standard error response codes are returned by this service method.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
   /orders/{orderId}/refund:
     post:
       tags:
@@ -367,86 +331,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderPaymentResult'
-        default:
-          description: |
-            Standard error response codes are returned by this service method.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
-  /orders/{orderId}/shipping-methods/{shippingAddressId}:
-    get:
-      tags:
-      - Order
-      summary: Gets Shipping and Tax information from Merchant's ShippingAndTax Callback
-      description: "As a customer interacts with the GoCart wallet during checkout,\
-        \ they can make adjustments to the shipping address for the order. This can\
-        \ have an impact on any shipping and/or tax calculations for the order in\
-        \ scope. GoCart mangages the calculation of shipping and tax using a `delegated\
-        \ callback` framework. \n\nWorkflow:\n  1. User chooses a shipping address\
-        \ in the GoCart modal\n  2. GoCart web application makes a remote call back\
-        \ to the GoCart web service to recalc shipping and tax\n  3. GoCart backend\
-        \ orchestrates a delegated callback to the merchant's shipping and tax calculation\
-        \ service\n  4. Results are routed back from merchant through the GoCart backend\
-        \ and to the customer's browser.\n"
-      parameters:
-      - name: orderId
-        in: path
-        description: |
-          The unique identifier for the order.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: dc14ae4c-3d8a-4d0d-8682-02d01befd57c
-      - name: shippingAddressId
-        in: path
-        description: |
-          The unique identifier for the shipping address.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: abcdae4c-3d8a-4d0d-8682-02d01befd57c
-      - name: base64ShippingUrl
-        in: query
-        description: |
-          Only used for legacy GoCart integrations. This should **NOT** be used for modern integrations.
-
-          Represents the URL endpoint for the merchant's shipping calculator as a base 64 string
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          description: The shipping calculator URL as a base 64 string
-          format: base64
-          nullable: true
-      - name: base64TaxUrl
-        in: query
-        description: |
-          Only used for legacy GoCart integrations. This should **NOT** be used for modern integrations.
-
-          Represents the URL endpoint for the merchant's tax calculator as a base 64 string
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
-          description: The tax calculator URL as a base 64 string
-          format: base64
-          nullable: true
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ShippingMethodsResponse'
         default:
           description: |
             Standard error response codes are returned by this service method.
@@ -1018,74 +902,6 @@ components:
           format: cents
           example: 10000
       additionalProperties: false
-    ShippingMethod:
-      type: object
-      properties:
-        name:
-          type: string
-          example: UPS Two Day Air
-        price:
-          minimum: 0
-          type: number
-          description: The price for this shipping method.
-          format: float
-          example: 9.99
-        tax:
-          type: number
-          description: "The tax associated with this shipping method.\n\nThis exists\
-            \ as based on certain shipping methods, like a merchant adding an in store\
-            \ pickup shipping method, the tax may be different than if the customer\
-            \ has the item shipped to their home address.\n"
-          format: float
-          example: 7.12
-        externalId:
-          type: string
-          description: The shipping method id.
-          format: uuid
-          example: 54f85467-fe63-42ee-9155-faa5d12728e1
-      additionalProperties: false
-    UpdateOrderInput:
-      type: object
-      properties:
-        Total:
-          type: integer
-          description: "The order total in cents format (e.g., $1.00 -> 100)"
-          format: cents
-          nullable: true
-          example: 10000
-        tip:
-          type: integer
-          description: "The order total in cents format (e.g., $1.00 -> 100)"
-          format: cents
-          nullable: true
-          example: 100
-        orderDescription:
-          type: string
-          nullable: true
-        metadata:
-          type: object
-          additionalProperties:
-            type: string
-          nullable: true
-        customerId:
-          type: string
-          nullable: true
-        shippingMethodId:
-          type: string
-          nullable: true
-      additionalProperties: false
-    ShippingMethodsResponse:
-      type: object
-      properties:
-        shippingMethods:
-          type: array
-          nullable: true
-          items:
-            $ref: '#/components/schemas/ShippingMethod'
-        preferredShippingMethodId:
-          type: string
-          nullable: true
-      additionalProperties: false
     ExceptionResponse:
       type: object
       properties:
@@ -1165,36 +981,6 @@ components:
           example: 5e89fbdc-3381-4f29-913c-daf1ee785a60
       example: null
   parameters:
-    ShippingCalcUrlQueryParameter:
-      name: base64ShippingUrl
-      in: query
-      description: |
-        Only used for legacy GoCart integrations. This should **NOT** be used for modern integrations.
-
-        Represents the URL endpoint for the merchant's shipping calculator as a base 64 string
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
-        description: The shipping calculator URL as a base 64 string
-        format: base64
-        nullable: true
-    TaxCalcUrlQueryParameter:
-      name: base64TaxUrl
-      in: query
-      description: |
-        Only used for legacy GoCart integrations. This should **NOT** be used for modern integrations.
-
-        Represents the URL endpoint for the merchant's tax calculator as a base 64 string
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
-        description: The tax calculator URL as a base 64 string
-        format: base64
-        nullable: true
     OrderIdQueryParameter:
       name: orderId
       in: query
