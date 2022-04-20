@@ -341,6 +341,22 @@ components:
           example: "Footwear"
       additionalProperties: false
       
+    PurchaseDetail:
+      type: object
+      properties:
+        label:
+          type: string
+          description: string label for a detail (max length of 30)
+          example: Store Address
+        description:
+          type: string
+          description: string description for a detail (max length of 30 for level 1 and 2; max length 105 for level 3)
+          example: 123 Street Name\nDenver, CO 12345
+        level:
+          type: integer
+          description: the display level for purchase details (can be 1, 2 or 3)
+          example: 3
+      
     OrderBase:
       required:
         - merchantId
@@ -389,6 +405,13 @@ components:
           type: string
           description: "A general description for the order."
           example: "A wonderful order of stuff."
+        purchaseDetails:
+          type: array
+          nullable: true
+          description: Custom purchase details specific to the order (max of 3 details)
+          items:
+            allOf:
+            - $ref: '#/components/schemas/PurchaseDetail'
         metadata:
           type: object
           description: |
@@ -508,6 +531,11 @@ components:
           items:
             $ref: '#/components/schemas/Transaction'
           nullable: true
+        purchaseDetails:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/PurchaseDetail'
         orderLineItems:
           type: array
           items:
@@ -900,7 +928,7 @@ components:
       
 servers: 
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.0
+    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.1
   - description: Staging Environment
     url: https://api-staging.gocartpay.com
   - description: Production Environment
