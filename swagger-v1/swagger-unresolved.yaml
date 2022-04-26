@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Order API
-  version: 1.0.1
+  version: 1.0.2
   description: |
     API used for managing GoCart orders. 
     
@@ -360,6 +360,34 @@ components:
           type: integer
           description: the display level for purchase details (can be 1, 2 or 3)
           example: 3
+    OrderPaymentMethod:
+      type: object
+      nullable: true
+      description: Details of card used to submit payment for an order
+      required: 
+        - cardBrand
+        - last4CardNumber
+        - expMonth
+        - expYear
+      properties:
+        cardBrand:
+          type: string
+          description: Brand of card used to submit payment
+          example: Visa
+        last4CardNumber:
+          type: string
+          description: Last 4 digits of card used to submit payment
+          example: 1234
+        expMonth:
+          type: number
+          description: Expiration month of card used to submit payment
+          format: int32
+          example: 10
+        expYear:
+          type: number
+          description: Expiration year of card used to submit payment
+          format: int32
+          example: 24
     OrderBase:
       required:
         - merchantId
@@ -417,6 +445,8 @@ components:
             - $ref: '#/components/schemas/PurchaseDetail'
           minItems: 0
           maxItems: 3
+        paymentMethod:
+          $ref: '#/components/schemas/OrderPaymentMethod'
         metadata:
           type: object
           description: |
@@ -541,6 +571,8 @@ components:
           nullable: true
           items:
             $ref: '#/components/schemas/PurchaseDetail'
+        paymentMethod:
+          $ref: '#/components/schemas/OrderPaymentMethod'
         orderLineItems:
           type: array
           items:
@@ -924,6 +956,12 @@ components:
             The amount to be reversed on the order in cents format (e.g., $1.00 -> 100)
           example: 10000
       additionalProperties: false
+    Schema:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
         
   securitySchemes:
     Bearer:
@@ -933,7 +971,7 @@ components:
       
 servers: 
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.1
+    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.2
   - description: Staging Environment
     url: https://api-staging.gocartpay.com
   - description: Production Environment
