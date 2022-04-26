@@ -8,9 +8,9 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.0
+  version: 1.0.1
 servers:
-- url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.0
+- url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.1
   description: SwaggerHub API Auto Mocking
 - url: https://api-staging.gocartpay.com
   description: Staging Environment
@@ -388,6 +388,26 @@ components:
           type: string
           example: Footwear
       additionalProperties: false
+    PurchaseDetail:
+      type: object
+      properties:
+        label:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: string label for a detail
+          example: Store Address
+        description:
+          maxLength: 30
+          minLength: 0
+          type: string
+          description: string description for a detail (max length of 30 for level
+            1 and 2; max length 105 for level 3)
+          example: "123 Street Name\\nDenver, CO 12345"
+        level:
+          type: integer
+          description: "the display level for purchase details (can be 1, 2 or 3)"
+          example: 3
     OrderBase:
       required:
       - merchantId
@@ -437,6 +457,17 @@ components:
           type: string
           description: A general description for the order.
           example: A wonderful order of stuff.
+        purchaseDetails:
+          maxItems: 3
+          minItems: 0
+          type: array
+          description: "Custom purchase details specific to the order. DO NOT include\
+            \ sensitive data in purchase details. Some examples of purchase details\
+            \ are delivery address, delivery time, or restaurant location"
+          nullable: true
+          items:
+            allOf:
+            - $ref: '#/components/schemas/PurchaseDetail'
         metadata:
           type: object
           additionalProperties:
@@ -550,6 +581,11 @@ components:
           nullable: true
           items:
             $ref: '#/components/schemas/Transaction'
+        purchaseDetails:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/PurchaseDetail'
         orderLineItems:
           type: array
           nullable: true
