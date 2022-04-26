@@ -346,17 +346,20 @@ components:
       properties:
         label:
           type: string
-          description: string label for a detail (max length of 30)
+          description: string label for a detail
           example: Store Address
+          minLength: 0
+          maxLength: 30
         description:
           type: string
           description: string description for a detail (max length of 30 for level 1 and 2; max length 105 for level 3)
           example: 123 Street Name\nDenver, CO 12345
+          minLength: 0
+          maxLength: 30
         level:
           type: integer
           description: the display level for purchase details (can be 1, 2 or 3)
           example: 3
-      
     OrderBase:
       required:
         - merchantId
@@ -408,10 +411,12 @@ components:
         purchaseDetails:
           type: array
           nullable: true
-          description: Custom purchase details specific to the order (max of 3 details)
+          description: Custom purchase details specific to the order. DO NOT include sensitive data in purchase details. Some examples of purchase details are delivery address, delivery time, or restaurant location
           items:
             allOf:
             - $ref: '#/components/schemas/PurchaseDetail'
+          minItems: 0
+          maxItems: 3
         metadata:
           type: object
           description: |
