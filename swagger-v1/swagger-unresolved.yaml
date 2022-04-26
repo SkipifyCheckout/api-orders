@@ -956,12 +956,6 @@ components:
             The amount to be reversed on the order in cents format (e.g., $1.00 -> 100)
           example: 10000
       additionalProperties: false
-    Schema:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
         
   securitySchemes:
     Bearer:
