@@ -392,10 +392,14 @@ components:
       type: object
       properties:
         label:
+          maxLength: 30
+          minLength: 0
           type: string
-          description: string label for a detail (max length of 30)
+          description: string label for a detail
           example: Store Address
         description:
+          maxLength: 30
+          minLength: 0
           type: string
           description: string description for a detail (max length of 30 for level
             1 and 2; max length 105 for level 3)
@@ -454,8 +458,12 @@ components:
           description: A general description for the order.
           example: A wonderful order of stuff.
         purchaseDetails:
+          maxItems: 3
+          minItems: 0
           type: array
-          description: Custom purchase details specific to the order (max of 3 details)
+          description: "Custom purchase details specific to the order. DO NOT include\
+            \ sensitive data in purchase details. Some examples of purchase details\
+            \ are delivery address, delivery time, or restaurant location"
           nullable: true
           items:
             allOf:
