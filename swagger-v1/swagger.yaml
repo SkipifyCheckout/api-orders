@@ -145,47 +145,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
-    put:
-      tags:
-      - Order
-      summary: Updates an order
-      description: |
-        Updates an order.
-
-        A valid **JWT** is required to access this endpoint.
-      parameters:
-      - name: orderId
-        in: path
-        description: |
-          The unique identifier for the order.
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: dc14ae4c-3d8a-4d0d-8682-02d01befd57c
-      requestBody:
-        description: ""
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateOrderInput'
-      responses:
-        "200":
-          description: "[200] The request to update the order succeeded and the exisiting\
-            \ resource was updated.\n"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OrderRecordSavedDto'
-        default:
-          description: |
-            Standard error response codes are returned by this service method.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
   /orders/{orderId}/refund:
     post:
       tags:
@@ -433,22 +392,6 @@ components:
           type: string
           example: Footwear
       additionalProperties: false
-    UpdateOrderInput:
-      type: object
-      properties:
-        total:
-          type: integer
-          description: "The order total to be updated in cents format (e.g., $1.00\
-            \ -> 100)"
-          nullable: true
-          example: 2000
-        tip:
-          type: integer
-          description: "The tip on the order in cents format (e.g., $1.00 -> 100)"
-          nullable: true
-          example: 500
-      allOf:
-      - $ref: '#/components/schemas/OrderWithOrderLinesBase'
     PurchaseDetail:
       type: object
       properties:
