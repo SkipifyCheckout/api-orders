@@ -591,17 +591,27 @@ components:
       properties:
         name:
           type: string
-          description: The method of shipping for the order
-          example: UPS 1 Day Shipping
+          example: UPS Two Day Air
         price:
-          type: integer
-          description: The cost of shipping
-          example: 599
+          minimum: 0
+          type: number
+          description: The price for this shipping method.
+          format: float
+          example: 9.99
         tax:
-          type: integer
-          description: The cost of tax for the shipping method
-          example: 100
-      nullable: true
+          type: number
+          description: "The tax associated with this shipping method.\n\nThis exists\
+            \ as based on certain shipping methods, like a merchant adding an in store\
+            \ pickup shipping method, the tax may be different than if the customer\
+            \ has the item shipped to their home address.\n"
+          format: float
+          example: 7.12
+        externalId:
+          type: string
+          description: The shipping method id.
+          format: uuid
+          example: 54f85467-fe63-42ee-9155-faa5d12728e1
+      additionalProperties: false
     TransactionType:
       type: string
       description: Transaction type options.
