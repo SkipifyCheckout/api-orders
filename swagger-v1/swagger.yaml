@@ -153,6 +153,18 @@ paths:
         Updates an order.
 
         A valid **JWT** is required to access this endpoint.
+      parameters:
+      - name: orderId
+        in: path
+        description: |
+          The unique identifier for the order.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uuid
+          example: dc14ae4c-3d8a-4d0d-8682-02d01befd57c
       requestBody:
         description: ""
         content:
