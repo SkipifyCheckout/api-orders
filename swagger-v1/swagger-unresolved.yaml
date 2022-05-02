@@ -101,38 +101,6 @@ paths:
             application/json:
               schema:
                 $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
-    
-    put:
-      tags:
-        - Order
-      summary: Updates an order
-      description: |
-        Updates an order.
-        
-        A valid **JWT** is required to access this endpoint.
-      parameters:
-        - $ref: '#/components/parameters/OrderIdPathParameter'
-      requestBody:
-        description: ''
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateOrderInput'
-      responses:
-        "200":
-          description: |
-            [200] The request to update the order succeeded and the exisiting resource was updated.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OrderRecordSavedDto'
-        default:
-          description: |
-            Standard error response codes are returned by this service method.
-          content:
-            application/json:
-              schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
                 
   /orders/{orderId}/refund:
     post:
@@ -376,22 +344,6 @@ components:
           type: string
           example: "Footwear"
       additionalProperties: false
-      
-    UpdateOrderInput:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/OrderWithOrderLinesBase'
-      properties:
-        total:
-          type: integer
-          example: 2000
-          description: "The order total to be updated in cents format (e.g., $1.00 -> 100)"
-          nullable: true
-        tip:
-          type: integer
-          example: 500
-          description: "The tip on the order in cents format (e.g., $1.00 -> 100)"
-          nullable: true
       
     PurchaseDetail:
       type: object
