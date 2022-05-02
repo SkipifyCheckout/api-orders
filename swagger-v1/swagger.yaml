@@ -8,9 +8,9 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.2
+  version: 1.0.3
 servers:
-- url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.2
+- url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.3
   description: SwaggerHub API Auto Mocking
 - url: https://api-staging.gocartpay.com
   description: Staging Environment
@@ -99,6 +99,10 @@ paths:
           description: "[201] The request succeeded and a new resource was created.\n\
             The identity for the resource created is included in the response **Location**\
             \ header.\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderRecordSavedDto'
         default:
           description: |
             Standard error response codes are returned by this service method.
@@ -134,6 +138,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderWithDetails'
+        default:
+          description: |
+            Standard error response codes are returned by this service method.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+    put:
+      tags:
+      - Order
+      summary: Updates an order
+      description: |
+        Updates an order.
+
+        A valid **JWT** is required to access this endpoint.
+      requestBody:
+        description: ""
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderInput'
+      responses:
+        "200":
+          description: "[200] The request to update the order succeeded and the exisiting\
+            \ resource was updated.\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderRecordSavedDto'
         default:
           description: |
             Standard error response codes are returned by this service method.
@@ -388,6 +421,54 @@ components:
           type: string
           example: Footwear
       additionalProperties: false
+    UpdateOrderInput:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: "The order total in cents format (e.g., $1.00 -> 100)"
+          nullable: true
+          example: 2000
+        tip:
+          type: integer
+          description: "The tip on the order in cents format (e.g., $1.00 -> 100)"
+          nullable: true
+          example: 500
+        orderDescription:
+          type: string
+          description: A general description for the order.
+          nullable: true
+          example: A wonderful order of stuff
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: |
+            A property where a merchant can store data of their chose. No sensitive data of any type should be stored in metadata.
+          nullable: true
+          example: "{\"someKey\": \"someValue\", \"someOtherKey\": \"someOtherValue\"\
+            }"
+        customerId:
+          type: string
+          description: The unique GoCart identifier for the customer.
+          format: uuid
+          nullable: true
+          example: 3be646f8-563c-4efa-b9d1-2a43f96c38a2
+        shippingMethodId:
+          type: string
+          description: The unique GoCart identifier for the shipping method.
+          format: uuid
+          nullable: true
+          example: 4cd646f8-563c-4efa-b9d1-2a43f96c38a2
+        purchaseDetails:
+          type: array
+          description: "Custom purchase details specific to the order. DO NOT include\
+            \ sensitive data in purchase details. Some examples of purchase details\
+            \ are delivery address, delivery time, or restaurant location"
+          nullable: true
+          items:
+            allOf:
+            - $ref: '#/components/schemas/PurchaseDetail'
     PurchaseDetail:
       type: object
       properties:
@@ -538,6 +619,66 @@ components:
           readOnly: true
           example: 100
       additionalProperties: false
+    ShippingAddress:
+      type: object
+      properties:
+        firstName:
+          type: string
+          nullable: true
+          example: Ron
+        lastName:
+          type: string
+          nullable: true
+          example: Burgundy
+        company:
+          type: string
+          nullable: true
+          example: KVWN Channel 4
+        address1:
+          type: string
+          nullable: true
+          example: 123 Main Street
+        address2:
+          type: string
+          nullable: true
+          example: Suite 205
+        city:
+          type: string
+          nullable: true
+          example: San Diego
+        state:
+          type: string
+          nullable: true
+          example: California
+        country:
+          type: string
+          nullable: true
+          example: US
+        zip:
+          type: string
+          nullable: true
+          example: "91902"
+        phoneNumber:
+          type: string
+          nullable: true
+          example: "6195551212"
+      nullable: true
+    ShippingMethod:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The method of shipping for the order
+          example: UPS 1 Day Shipping
+        price:
+          type: integer
+          description: The cost of shipping
+          example: 599
+        tax:
+          type: integer
+          description: The cost of tax for the shipping method
+          example: 100
+      nullable: true
     TransactionType:
       type: string
       description: Transaction type options.
@@ -625,6 +766,19 @@ components:
             $ref: '#/components/schemas/OrderWithDetails_orderLineItems'
       allOf:
       - $ref: '#/components/schemas/Order'
+    OrderRecordSavedDto:
+      type: object
+      properties:
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingMethod'
+        shippingMethod:
+          $ref: '#/components/schemas/ShippingAddress'
+        storeId:
+          type: string
+          description: Identifier for the store the order is from
+      nullable: true
+      allOf:
+      - $ref: '#/components/schemas/OrderWithDetails'
     Order:
       type: object
       properties:
