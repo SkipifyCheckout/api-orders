@@ -8,9 +8,9 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 1.0.1
+  version: 1.0.2
 servers:
-- url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.1
+- url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.2
   description: SwaggerHub API Auto Mocking
 - url: https://api-staging.gocartpay.com
   description: Staging Environment
@@ -408,6 +408,34 @@ components:
           type: integer
           description: "the display level for purchase details (can be 1, 2 or 3)"
           example: 3
+    OrderPaymentMethod:
+      required:
+      - cardBrand
+      - expMonth
+      - expYear
+      - last4CardNumber
+      type: object
+      properties:
+        cardBrand:
+          type: string
+          description: Brand of card used to submit payment
+          example: Visa
+        last4CardNumber:
+          type: string
+          description: Last 4 digits of card used to submit payment
+          example: "1234"
+        expMonth:
+          type: number
+          description: Expiration month of card used to submit payment
+          format: int32
+          example: 10
+        expYear:
+          type: number
+          description: Expiration year of card used to submit payment
+          format: int32
+          example: 24
+      description: Details of card used to submit payment for an order
+      nullable: true
     OrderBase:
       required:
       - merchantId
@@ -468,6 +496,8 @@ components:
           items:
             allOf:
             - $ref: '#/components/schemas/PurchaseDetail'
+        paymentMethod:
+          $ref: '#/components/schemas/OrderPaymentMethod'
         metadata:
           type: object
           additionalProperties:
@@ -586,6 +616,8 @@ components:
           nullable: true
           items:
             $ref: '#/components/schemas/PurchaseDetail'
+        paymentMethod:
+          $ref: '#/components/schemas/OrderPaymentMethod'
         orderLineItems:
           type: array
           nullable: true
