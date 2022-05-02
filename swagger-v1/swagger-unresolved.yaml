@@ -540,20 +540,30 @@ components:
           
     ShippingMethod:
       type: object
-      nullable: true
       properties:
         name:
           type: string
-          example: "UPS 1 Day Shipping"
-          description: "The method of shipping for the order"
+          example: "UPS Two Day Air"
         price:
-          type: integer
-          description: "The cost of shipping"
-          example: 599
+          type: number
+          format: float
+          description: "The price for this shipping method." 
+          minimum: 0
+          example: 9.99
         tax:
-          type: integer
-          description: "The cost of tax for the shipping method"
-          example: 100
+          type: number
+          format: float
+          description: |
+            The tax associated with this shipping method.
+            
+            This exists as based on certain shipping methods, like a merchant adding an in store pickup shipping method, the tax may be different than if the customer has the item shipped to their home address.
+          example: 7.12
+        externalId:
+          type: string
+          format: uuid
+          description: "The shipping method id."
+          example: "54f85467-fe63-42ee-9155-faa5d12728e1"
+      additionalProperties: false
       
     TransactionType:
       enum:
