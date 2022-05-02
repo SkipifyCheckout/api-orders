@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Order API
-  version: 1.0.2
+  version: 1.0.3
   description: |
     API used for managing GoCart orders. 
     
@@ -64,6 +64,10 @@ paths:
           description: |
             [201] The request succeeded and a new resource was created.
             The identity for the resource created is included in the response **Location** header.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderRecordSavedDto'
         default:
           description: |
             Standard error response codes are returned by this service method.
@@ -90,6 +94,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderWithDetails'
+        default:
+          description: |
+            Standard error response codes are returned by this service method.
+          content:
+            application/json:
+              schema:
+                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+    
+    put:
+      tags:
+        - Order
+      summary: Updates an order
+      description: |
+        Updates an order.
+        
+        A valid **JWT** is required to access this endpoint.
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderInput'
+      responses:
+        "200":
+          description: |
+            [200] The request to update the order succeeded and the exisiting resource was updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderRecordSavedDto'
         default:
           description: |
             Standard error response codes are returned by this service method.
@@ -341,6 +375,53 @@ components:
           example: "Footwear"
       additionalProperties: false
       
+    UpdateOrderInput:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 2000
+          description: "The order total in cents format (e.g., $1.00 -> 100)"
+          nullable: true
+        tip:
+          type: integer
+          example: 500
+          description: "The tip on the order in cents format (e.g., $1.00 -> 100)"
+          nullable: true
+        orderDescription:
+          type: string
+          example: "A wonderful order of stuff"
+          description: "A general description for the order."
+          nullable: true
+        metadata:
+          type: object
+          description: |
+            A property where a merchant can store data of their chose. No sensitive data of any type should be stored in metadata.
+          additionalProperties:
+            type: string
+          nullable: true
+          example: '{"someKey": "someValue", "someOtherKey": "someOtherValue"}'
+        customerId:
+          type: string
+          format: uuid
+          nullable: true
+          description: "The unique GoCart identifier for the customer." 
+          example: "3be646f8-563c-4efa-b9d1-2a43f96c38a2"
+        shippingMethodId:
+          type: string
+          format: uuid
+          nullable: true
+          description: "The unique GoCart identifier for the shipping method." 
+          example: "4cd646f8-563c-4efa-b9d1-2a43f96c38a2"
+        purchaseDetails:
+          type: array
+          nullable: true
+          description: Custom purchase details specific to the order. DO NOT include sensitive data in purchase details. Some examples of purchase details are delivery address, delivery time, or restaurant location
+          items:
+            allOf:
+            - $ref: '#/components/schemas/PurchaseDetail'
+          
+      
     PurchaseDetail:
       type: object
       properties:
@@ -489,6 +570,68 @@ components:
           example: 100
       additionalProperties: false
       
+    ShippingAddress:
+      type: object
+      nullable: true
+      properties:
+        firstName:
+          type: string
+          example: "Ron"
+          nullable: true
+        lastName:
+          type: string
+          example: "Burgundy"
+          nullable: true
+        company:
+          type: string
+          example: "KVWN Channel 4"
+          nullable: true
+        address1:
+          type: string
+          example: "123 Main Street"
+          nullable: true
+        address2:
+          type: string
+          example: "Suite 205"
+          nullable: true
+        city:
+          type: string 
+          example: "San Diego"
+          nullable: true
+        state:
+          type: string
+          example: "California"
+          nullable: true
+        country:
+          type: string 
+          example: "US"
+          nullable: true
+        zip:
+          type: string
+          example: "91902"
+          nullable: true
+        phoneNumber:
+          type: string
+          example: "6195551212"
+          nullable: true
+          
+    ShippingMethod:
+      type: object
+      nullable: true
+      properties:
+        name:
+          type: string
+          example: "UPS 1 Day Shipping"
+          description: "The method of shipping for the order"
+        price:
+          type: integer
+          description: "The cost of shipping"
+          example: 599
+        tax:
+          type: integer
+          description: "The cost of tax for the shipping method"
+          example: 100
+      
     TransactionType:
       enum:
         - SALE
@@ -585,6 +728,20 @@ components:
                 description: "The unique identifier of the order line."
                 example: "5e89fbdc-3381-4f29-913c-daf1ee785a60"
           nullable: true
+          
+    OrderRecordSavedDto:
+        type: object
+        nullable: true
+        allOf: 
+          - $ref: '#/components/schemas/OrderWithDetails'
+        properties:
+          shippingAddress:
+           $ref: '#/components/schemas/ShippingMethod'
+          shippingMethod:
+            $ref: '#/components/schemas/ShippingAddress'
+          storeId:
+            type: string
+            description: "Identifier for the store the order is from"
       
     Order:
       type: object
@@ -965,7 +1122,7 @@ components:
       
 servers: 
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.2
+    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.3
   - description: Staging Environment
     url: https://api-staging.gocartpay.com
   - description: Production Environment
