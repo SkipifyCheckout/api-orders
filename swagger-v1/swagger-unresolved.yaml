@@ -379,50 +379,19 @@ components:
       
     UpdateOrderInput:
       type: object
+      allOf:
+        - $ref: '#/components/schemas/OrderWithOrderLinesBase'
       properties:
         total:
           type: integer
           example: 2000
-          description: "The order total in cents format (e.g., $1.00 -> 100)"
+          description: "The order total to be updated in cents format (e.g., $1.00 -> 100)"
           nullable: true
         tip:
           type: integer
           example: 500
           description: "The tip on the order in cents format (e.g., $1.00 -> 100)"
           nullable: true
-        orderDescription:
-          type: string
-          example: "A wonderful order of stuff"
-          description: "A general description for the order."
-          nullable: true
-        metadata:
-          type: object
-          description: |
-            A property where a merchant can store data of their chose. No sensitive data of any type should be stored in metadata.
-          additionalProperties:
-            type: string
-          nullable: true
-          example: '{"someKey": "someValue", "someOtherKey": "someOtherValue"}'
-        customerId:
-          type: string
-          format: uuid
-          nullable: true
-          description: "The unique GoCart identifier for the customer." 
-          example: "3be646f8-563c-4efa-b9d1-2a43f96c38a2"
-        shippingMethodId:
-          type: string
-          format: uuid
-          nullable: true
-          description: "The unique GoCart identifier for the shipping method." 
-          example: "4cd646f8-563c-4efa-b9d1-2a43f96c38a2"
-        purchaseDetails:
-          type: array
-          nullable: true
-          description: Custom purchase details specific to the order. DO NOT include sensitive data in purchase details. Some examples of purchase details are delivery address, delivery time, or restaurant location
-          items:
-            allOf:
-            - $ref: '#/components/schemas/PurchaseDetail'
-          
       
     PurchaseDetail:
       type: object
@@ -806,7 +775,7 @@ components:
         orderDescription:
           type: string
           description: "The description of the order."
-          example: "Online Order"
+          example: "A wonderful order of stuff."
         metadata:
           type: string
           nullable: true
