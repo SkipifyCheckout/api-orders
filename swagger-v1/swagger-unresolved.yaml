@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Order API
-  version: 1.0.2
+  version: 1.0.3
   description: |
     API used for managing GoCart orders. 
     
@@ -64,6 +64,10 @@ paths:
           description: |
             [201] The request succeeded and a new resource was created.
             The identity for the resource created is included in the response **Location** header.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderRecordSavedDto'
         default:
           description: |
             Standard error response codes are returned by this service method.
@@ -489,6 +493,78 @@ components:
           example: 100
       additionalProperties: false
       
+    ShippingAddress:
+      type: object
+      nullable: true
+      properties:
+        firstName:
+          type: string
+          example: "Ron"
+          nullable: true
+        lastName:
+          type: string
+          example: "Burgundy"
+          nullable: true
+        company:
+          type: string
+          example: "KVWN Channel 4"
+          nullable: true
+        address1:
+          type: string
+          example: "123 Main Street"
+          nullable: true
+        address2:
+          type: string
+          example: "Suite 205"
+          nullable: true
+        city:
+          type: string 
+          example: "San Diego"
+          nullable: true
+        state:
+          type: string
+          example: "California"
+          nullable: true
+        country:
+          type: string 
+          example: "US"
+          nullable: true
+        zip:
+          type: string
+          example: "91902"
+          nullable: true
+        phoneNumber:
+          type: string
+          example: "6195551212"
+          nullable: true
+          
+    ShippingMethod:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "UPS Two Day Air"
+        price:
+          type: number
+          format: float
+          description: "The price for this shipping method." 
+          minimum: 0
+          example: 9.99
+        tax:
+          type: number
+          format: float
+          description: |
+            The tax associated with this shipping method.
+            
+            This exists as based on certain shipping methods, like a merchant adding an in store pickup shipping method, the tax may be different than if the customer has the item shipped to their home address.
+          example: 7.12
+        externalId:
+          type: string
+          format: uuid
+          description: "The shipping method id."
+          example: "54f85467-fe63-42ee-9155-faa5d12728e1"
+      additionalProperties: false
+      
     TransactionType:
       enum:
         - SALE
@@ -585,6 +661,20 @@ components:
                 description: "The unique identifier of the order line."
                 example: "5e89fbdc-3381-4f29-913c-daf1ee785a60"
           nullable: true
+          
+    OrderRecordSavedDto:
+        type: object
+        nullable: true
+        allOf: 
+          - $ref: '#/components/schemas/OrderWithDetails'
+        properties:
+          shippingAddress:
+           $ref: '#/components/schemas/ShippingMethod'
+          shippingMethod:
+            $ref: '#/components/schemas/ShippingAddress'
+          storeId:
+            type: string
+            description: "Identifier for the store the order is from"
       
     Order:
       type: object
@@ -647,7 +737,7 @@ components:
         orderDescription:
           type: string
           description: "The description of the order."
-          example: "Online Order"
+          example: "A wonderful order of stuff."
         metadata:
           type: string
           nullable: true
@@ -965,7 +1055,7 @@ components:
       
 servers: 
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.2
+    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.3
   - description: Staging Environment
     url: https://api-staging.gocartpay.com
   - description: Production Environment
