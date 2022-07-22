@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Order API
-  version: 1.0.3
+  version: 1.0.4
   description: |
     API used for managing GoCart orders. 
     
@@ -631,36 +631,37 @@ components:
       type: object
       allOf:
         - $ref: '#/components/schemas/Order'
-      properties:
-        tipPercentages:
-          type: array
-          items:
-            $ref: '#/components/schemas/TipPercentage'
-          nullable: true
-        transactions:
-          type: array
-          items:
-            $ref: '#/components/schemas/Transaction'
-          nullable: true
-        purchaseDetails:
-          type: array
-          nullable: true
-          items:
-            $ref: '#/components/schemas/PurchaseDetail'
-        paymentMethod:
-          $ref: '#/components/schemas/OrderPaymentMethod'
-        orderLineItems:
-          type: array
-          items:
-            allOf:
-              - $ref: '#/components/schemas/OrderLineBase'
-            properties:
-              externalId: 
-                type: string
-                format: uuid
-                description: "The unique identifier of the order line."
-                example: "5e89fbdc-3381-4f29-913c-daf1ee785a60"
-          nullable: true
+        - type: object
+          properties:
+            tipPercentages:
+              type: array
+              items:
+                $ref: '#/components/schemas/TipPercentage'
+              nullable: true
+            transactions:
+              type: array
+              items:
+                $ref: '#/components/schemas/Transaction'
+              nullable: true
+            purchaseDetails:
+              type: array
+              nullable: true
+              items:
+                $ref: '#/components/schemas/PurchaseDetail'
+            paymentMethod:
+              $ref: '#/components/schemas/OrderPaymentMethod'
+            orderLineItems:
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/OrderLineBase'
+                properties:
+                  externalId: 
+                    type: string
+                    format: uuid
+                    description: "The unique identifier of the order line."
+                    example: "5e89fbdc-3381-4f29-913c-daf1ee785a60"
+              nullable: true
           
     OrderRecordSavedDto:
         type: object
@@ -1055,7 +1056,7 @@ components:
       
 servers: 
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.3
+    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.4
   - description: Staging Environment
     url: https://api-staging.gocartpay.com
   - description: Production Environment
