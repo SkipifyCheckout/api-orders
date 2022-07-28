@@ -4,7 +4,8 @@ info:
   description: "API used for managing GoCart orders. \n\nOperations such as creating\
     \ a new order, voiding, and refunding can be found here. \n\nUnless otherwise\
     \ specified, each of these endpoints requires the user to be authenticated with\
-    \ a merchant's HMAC token or JWT.\n"
+    \ a merchant's [MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)\
+    \ token or JWT.\n"
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -32,7 +33,7 @@ paths:
       description: |
         Retrieve a paginated summary of orders filtered based on querystring parameters.
 
-        A valid **HMAC** is required to access this endpoint.
+        A valid **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       parameters:
       - name: orderId
         in: query
@@ -87,7 +88,7 @@ paths:
       description: |
         Creates an order.
 
-        A valid **JWT** is required to access this endpoint.
+        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       requestBody:
         description: ""
         content:
@@ -118,7 +119,7 @@ paths:
       description: |
         Retrieve the specified order.
 
-        A valid **JWT** or **HMAC** is required to access this endpoint.
+        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       parameters:
       - name: orderId
         in: path
@@ -152,6 +153,8 @@ paths:
       summary: Refunds an order
       description: |
         Issues a request to refund a portion or the entire order.
+
+        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       parameters:
       - name: orderId
         in: path
@@ -189,6 +192,10 @@ paths:
       tags:
       - Order
       summary: Captures an order
+      description: |
+        Issues a request to capture a portion or the entire order after payment authorization.
+
+        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       parameters:
       - name: orderId
         in: path
@@ -226,6 +233,10 @@ paths:
       tags:
       - Order
       summary: Voids an order
+      description: |
+        Issues a request to void a portion or the entire order after payment capture.
+
+        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       parameters:
       - name: orderId
         in: path

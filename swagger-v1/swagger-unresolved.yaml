@@ -7,7 +7,7 @@ info:
     
     Operations such as creating a new order, voiding, and refunding can be found here. 
     
-    Unless otherwise specified, each of these endpoints requires the user to be authenticated with a merchant's HMAC token or JWT.
+    Unless otherwise specified, each of these endpoints requires the user to be authenticated with a merchant's [MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3) token or JWT.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -26,7 +26,7 @@ paths:
       description: |
         Retrieve a paginated summary of orders filtered based on querystring parameters.
         
-        A valid **HMAC** is required to access this endpoint.
+        A valid **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       parameters:
         - $ref: '#/components/parameters/OrderIdQueryParameter'
         - $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/parameters/PageSize'
@@ -52,7 +52,7 @@ paths:
       description: |
         Creates an order.
         
-        A valid **JWT** is required to access this endpoint.
+        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       requestBody:
         description: ''
         content:
@@ -84,7 +84,7 @@ paths:
       description: |
         Retrieve the specified order.
         
-        A valid **JWT** or **HMAC** is required to access this endpoint.
+        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       responses:
@@ -109,6 +109,8 @@ paths:
       summary: Refunds an order
       description: | 
         Issues a request to refund a portion or the entire order.
+        
+        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -137,10 +139,14 @@ paths:
       tags:
         - Order
       summary: Captures an order
+      description: | 
+        Issues a request to capture a portion or the entire order after payment authorization.
+        
+        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
-        description: Order Capture request
+        description: Order Capture request 
         content:
           application/json:
             schema:
@@ -165,6 +171,10 @@ paths:
       tags:
         - Order
       summary: Voids an order
+      description: | 
+        Issues a request to void a portion or the entire order after payment capture.
+        
+        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-hmac-3)** is required to access this endpoint.
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
