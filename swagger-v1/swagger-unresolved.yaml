@@ -27,6 +27,8 @@ paths:
         Retrieve a paginated summary of orders filtered based on querystring parameters.
         
         A valid **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+          
+        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
       parameters:
         - $ref: '#/components/parameters/OrderIdQueryParameter'
         - $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/parameters/PageSize'
@@ -53,6 +55,8 @@ paths:
         Creates an order.
         
         A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+          
+        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
       requestBody:
         description: ''
         content:
@@ -85,6 +89,8 @@ paths:
         Retrieve the specified order.
         
         A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+          
+        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       responses:
@@ -107,10 +113,12 @@ paths:
       tags:
         - Order
       summary: Refunds an order
-      description: | 
+      description: |
         Issues a request to refund a portion or the entire order.
         
         A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+          
+        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -139,10 +147,12 @@ paths:
       tags:
         - Order
       summary: Captures an order
-      description: | 
+      description: |
         Issues a request to capture a portion or the entire order after payment authorization.
         
         A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+          
+        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -171,10 +181,12 @@ paths:
       tags:
         - Order
       summary: Voids an order
-      description: | 
+      description: |
         Issues a request to void a portion or the entire order after payment capture.
         
         A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+          
+        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -203,7 +215,13 @@ paths:
       tags:
         - Order
       summary: Refunds an order
-      description: "<br>JWT Required: Merchant\r\n<br>Authorization Policy: IP Address\r\n<br>Roles: Super Admin\r\n<br>CORS Policy: Merchant Portal"
+      description: |
+        JWT Required: Merchant
+        Authorization Policy: IP Address
+        Roles: Super Admin
+        CORS Policy: Merchant Portal
+          
+        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -233,6 +251,7 @@ paths:
         - Order
       summary: Submit a payment request for the given customer and payment token
       description: |
+        
         Submits a payment request to the payment gateway.
         
         A valid **JWT** is required to access this endpoint.
@@ -250,6 +269,8 @@ paths:
           - 1000: Internal payment gateway error
           - 1001: Token Management System Error
           - -1: Unknown error
+          
+        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -485,23 +506,24 @@ components:
               - $ref: '#/components/schemas/OrderLineBase'
       
     TipPercentage:
-      type: object
-      properties:
-        percent:
-          type: integer
-          format: percentage
-          readOnly: true
-          minimum: 0
-          maximum: 100
-          description: "A tip percentage (e.g., 5% -> 5)"
-          example: 5
-        amount:
-          type: integer
-          format: cents
-          readOnly: true
-          description: "The calculated tip monetary amount (percentage x order total)."
-          example: 100
-      additionalProperties: false
+      allOf:
+        - type: object
+          properties:
+            percent:
+              type: integer
+              format: percentage
+              readOnly: true
+              minimum: 0
+              maximum: 100
+              description: "A tip percentage (e.g., 5% -> 5)"
+              example: 5
+            amount:
+              type: integer
+              format: cents
+              readOnly: true
+              description: "The calculated tip monetary amount (percentage x order total)."
+              example: 100
+          additionalProperties: false
       
     ShippingAddress:
       type: object
@@ -608,13 +630,11 @@ components:
           type: string
           nullable: true
           description: "The payment gateway's transaction id."
-          example: "GC-29292383"
         amount:
           type: integer
           format: cents
           description: "The amount processed in the transaction in cents (e.g., $1.00 -> 100)"
           nullable: true
-          example: 10000
         type:
           $ref: '#/components/schemas/TransactionType'
         status:
@@ -628,13 +648,19 @@ components:
           format: uuid
           nullable: true
           readOnly: true
-          example: "a7cc003b-07ac-4d4a-a830-46718ff3be8f"
         externalId:
           type: string
           format: uuid
           description: "The unique identifier for this transaction in GoCart."
           nullable: true
-          example: "26fb916a-9a88-46cc-abbe-c2873e263ae8"
+      example:
+        gatewayTransactionId: "GC-29292383"
+        amount: 10000
+        type: "SALE"
+        status: "SUCCESS"
+        approvalCode: "The approval code received from the payment gateway."
+        orderId: "a7cc003b-07ac-4d4a-a830-46718ff3be8f"
+        externalId: "26fb916a-9a88-46cc-abbe-c2873e263ae8"
       additionalProperties: false
       
     OrderWithDetails:
@@ -658,13 +684,28 @@ components:
               nullable: true
               items:
                 $ref: '#/components/schemas/PurchaseDetail'
+              example: [
+                {
+                  "label": "Store Address",
+                  "description": "123 Street Name\\nDenver, CO 12345",
+                  "level": 3
+                }
+              ]
             paymentMethod:
-              $ref: '#/components/schemas/OrderPaymentMethod'
+              type: object
+              nullable: true
+              items:
+                $ref: '#/components/schemas/OrderPaymentMethod'
+              example: {
+                "cardBrand": "Visa",
+                "last4CardNumber": "1234",
+                "expMonth": 10,
+                "expYear": 24
+              }
             orderLineItems:
               type: array
               items:
                 allOf:
-                  - $ref: '#/components/schemas/OrderLineBase'
                   - type: object
                     properties:
                       externalId: 
@@ -672,7 +713,17 @@ components:
                         format: uuid
                         description: "The unique identifier of the order line."
                         example: "5e89fbdc-3381-4f29-913c-daf1ee785a60"
+                  - $ref: '#/components/schemas/OrderLineBase'
               nullable: true
+              example: [
+                {
+                  "externalId": "5e89fbdc-3381-4f29-913c-daf1ee785a60",
+                  "sku": "UGG-BB-PUR-06",
+                  "description": "Purple Ugg boots in the Bailey Bow style",
+                  "amount": 9999,
+                  "category": "Footwear"
+                }
+              ]
           
     OrderRecordSavedDto:
         type: object
