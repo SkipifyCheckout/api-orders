@@ -665,12 +665,12 @@ components:
               items:
                 allOf:
                   - $ref: '#/components/schemas/OrderLineBase'
-                properties:
-                  externalId: 
-                    type: string
-                    format: uuid
-                    description: "The unique identifier of the order line."
-                    example: "5e89fbdc-3381-4f29-913c-daf1ee785a60"
+                    properties:
+                      externalId: 
+                        type: string
+                        format: uuid
+                        description: "The unique identifier of the order line."
+                        example: "5e89fbdc-3381-4f29-913c-daf1ee785a60"
               nullable: true
           
     OrderRecordSavedDto:
