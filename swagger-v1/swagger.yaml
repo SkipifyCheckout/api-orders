@@ -720,7 +720,8 @@ components:
             type: array
             nullable: true
             items:
-              $ref: '#/components/schemas/OrderWithDetails_orderLineItems'
+              allOf:
+              - $ref: '#/components/schemas/OrderLineBase'
     OrderRecordSavedDto:
       type: object
       properties:
@@ -1160,14 +1161,6 @@ components:
           nullable: true
           readOnly: true
       additionalProperties: false
-    OrderWithDetails_orderLineItems:
-      properties:
-        externalId:
-          type: string
-          description: The unique identifier of the order line.
-          format: uuid
-          example: 5e89fbdc-3381-4f29-913c-daf1ee785a60
-      example: null
   parameters:
     OrderIdQueryParameter:
       name: orderId
