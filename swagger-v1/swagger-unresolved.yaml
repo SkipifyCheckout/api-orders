@@ -665,6 +665,7 @@ components:
               items:
                 allOf:
                   - $ref: '#/components/schemas/OrderLineBase'
+                  - type: object
                     properties:
                       externalId: 
                         type: string

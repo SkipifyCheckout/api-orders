@@ -722,6 +722,13 @@ components:
             items:
               allOf:
               - $ref: '#/components/schemas/OrderLineBase'
+              - type: object
+                properties:
+                  externalId:
+                    type: string
+                    description: The unique identifier of the order line.
+                    format: uuid
+                    example: 5e89fbdc-3381-4f29-913c-daf1ee785a60
     OrderRecordSavedDto:
       type: object
       properties:
