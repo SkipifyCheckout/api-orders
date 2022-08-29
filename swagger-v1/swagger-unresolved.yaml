@@ -28,7 +28,7 @@ paths:
         
         A valid **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        ###### GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.
       parameters:
         - $ref: '#/components/parameters/OrderIdQueryParameter'
         - $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/parameters/PageSize'
@@ -56,7 +56,7 @@ paths:
         
         A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        ##### GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.
       requestBody:
         description: ''
         content:
@@ -90,7 +90,7 @@ paths:
         
         A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        #### GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       responses:
@@ -118,7 +118,7 @@ paths:
         
         A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        <sup><sub>GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.</sup></sub>
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -361,19 +361,20 @@ components:
         sku:
           type: string
           format: sku
-          example: "UGG-BB-PUR-06"
         description:
           type: string
           description: "The description for the line item."
-          example: "Purple Ugg boots in the Bailey Bow style"
         amount:
           type: integer
           format: cents
           description: "The amount for the line item (in USD cents)."
-          example: 9999
         category:
           type: string
-          example: "Footwear"
+      example:
+        sku: "UGG-BB-PUR-06"
+        description: "Purple Ugg boots in the Bailey Bow style"
+        amount: 9999
+        category: "Footwear"
       additionalProperties: false
       
     PurchaseDetail:
@@ -382,19 +383,20 @@ components:
         label:
           type: string
           description: string label for a detail
-          example: Store Address
           minLength: 0
           maxLength: 30
         description:
           type: string
           description: string description for a detail (max length of 30 for level 1 and 2; max length 105 for level 3)
-          example: 123 Street Name\nDenver, CO 12345
           minLength: 0
           maxLength: 30
         level:
           type: integer
           description: the display level for purchase details (can be 1, 2 or 3)
-          example: 3
+      example:
+        label: Store Address
+        description: 123 Street Name\nDenver, CO 12345
+        level: 3
     OrderPaymentMethod:
       type: object
       nullable: true
@@ -423,6 +425,11 @@ components:
           description: Expiration year of card used to submit payment
           format: int32
           example: 24
+      example:
+        cardBrand: "Visa"
+        last4CardNumber: "1234"
+        expMonth: 10
+        expYear: 24
     OrderBase:
       required:
         - merchantId
@@ -516,13 +523,14 @@ components:
               minimum: 0
               maximum: 100
               description: "A tip percentage (e.g., 5% -> 5)"
-              example: 5
             amount:
               type: integer
               format: cents
               readOnly: true
               description: "The calculated tip monetary amount (percentage x order total)."
-              example: 100
+          example:
+            percent: 5
+            amount: 100
           additionalProperties: false
       
     ShippingAddress:
@@ -684,24 +692,9 @@ components:
               nullable: true
               items:
                 $ref: '#/components/schemas/PurchaseDetail'
-              example: [
-                {
-                  "label": "Store Address",
-                  "description": "123 Street Name\\nDenver, CO 12345",
-                  "level": 3
-                }
-              ]
             paymentMethod:
-              type: object
-              nullable: true
-              items:
-                $ref: '#/components/schemas/OrderPaymentMethod'
-              example: {
-                "cardBrand": "Visa",
-                "last4CardNumber": "1234",
-                "expMonth": 10,
-                "expYear": 24
-              }
+              allOf:
+                - $ref: '#/components/schemas/OrderPaymentMethod'
             orderLineItems:
               type: array
               items:
@@ -712,18 +705,16 @@ components:
                         type: string
                         format: uuid
                         description: "The unique identifier of the order line."
-                        example: "5e89fbdc-3381-4f29-913c-daf1ee785a60"
                   - $ref: '#/components/schemas/OrderLineBase'
               nullable: true
-              example: [
-                {
+              example:
+                [{
                   "externalId": "5e89fbdc-3381-4f29-913c-daf1ee785a60",
                   "sku": "UGG-BB-PUR-06",
                   "description": "Purple Ugg boots in the Bailey Bow style",
                   "amount": 9999,
                   "category": "Footwear"
-                }
-              ]
+                }]
           
     OrderRecordSavedDto:
         type: object
