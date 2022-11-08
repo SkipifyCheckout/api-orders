@@ -1,10 +1,10 @@
 openapi: 3.0.1
 info:
   title: Order API
-  description: "API used for managing GoCart orders. \n\nOperations such as creating\
+  description: "API used for managing Skipify orders. \n\nOperations such as creating\
     \ a new order, voiding, and refunding can be found here. \n\nUnless otherwise\
     \ specified, each of these endpoints requires the user to be authenticated with\
-    \ a merchant's [MAC](https://docs.gocartpay.com/docs/api-authentication-mac) token\
+    \ a merchant's [MAC](https://docs.skipify.com/docs/api-authentication-mac) token\
     \ or JWT.\n"
   license:
     name: Apache 2.0
@@ -31,16 +31,16 @@ paths:
       summary: Retrieve a paginated summary of orders filtered based on querystring
         parameters.
       description: "Retrieve a paginated summary of orders filtered based on querystring\
-        \ parameters.\n\nA valid **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)**\
-        \ is required to access this endpoint.\n  \n###### GoCart offers Staging &\
-        \ Production environments for the different phases of integration. See the\
-        \ [Environments](https://docs.gocartpay.com/docs/environments) page for more\
+        \ parameters.\n\nA valid **[MAC](https://docs.skipify.com/docs/api-authentication-mac)**\
+        \ is required to access this endpoint.\n  \n###### Skipify offers Staging\
+        \ & Production environments for the different phases of integration. See the\
+        \ [Environments](https://docs.skipify.com/docs/environments) page for more\
         \ details.\n"
       parameters:
       - name: orderId
         in: query
         description: |
-          The unique identifier for the order in the context of GoCart.
+          The unique identifier for the order in the context of Skipify.
         required: false
         style: form
         explode: true
@@ -87,10 +87,10 @@ paths:
       tags:
       - Order
       summary: Creates an order
-      description: "Creates an order.\n\nA valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)**\
-        \ is required to access this endpoint.\n  \n##### GoCart offers Staging &\
+      description: "Creates an order.\n\nA valid **JWT** or **[MAC](https://docs.skipify.com/docs/api-authentication-mac)**\
+        \ is required to access this endpoint.\n  \n##### Skipify offers Staging &\
         \ Production environments for the different phases of integration. See the\
-        \ [Environments](https://docs.gocartpay.com/docs/environments) page for more\
+        \ [Environments](https://docs.skipify.com/docs/environments) page for more\
         \ details.\n"
       requestBody:
         description: ""
@@ -119,10 +119,11 @@ paths:
       tags:
       - Order
       summary: Retrieves an order
-      description: "Retrieve the specified order.\n\nA valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)**\
-        \ is required to access this endpoint.\n  \n#### GoCart offers Staging & Production\
-        \ environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments)\
-        \ page for more details.\n"
+      description: "Retrieve the specified order.\n\nA valid **JWT** or **[MAC](https://docs.skipify.com/docs/api-authentication-mac)**\
+        \ is required to access this endpoint.\n  \n#### Skipify offers Staging &\
+        \ Production environments for the different phases of integration. See the\
+        \ [Environments](https://docs.skipify.com/docs/environments) page for more\
+        \ details.\n"
       parameters:
       - name: orderId
         in: path
@@ -155,10 +156,10 @@ paths:
       - Order
       summary: Refunds an order
       description: "Issues a request to refund a portion or the entire order.\n\n\
-        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)**\
-        \ is required to access this endpoint.\n  \n<sup><sub>GoCart offers Staging\
+        A valid **JWT** or **[MAC](https://docs.skipify.com/docs/api-authentication-mac)**\
+        \ is required to access this endpoint.\n  \n<sup><sub>Skipify offers Staging\
         \ & Production environments for the different phases of integration. See the\
-        \ [Environments](https://docs.gocartpay.com/docs/environments) page for more\
+        \ [Environments](https://docs.skipify.com/docs/environments) page for more\
         \ details.</sup></sub>\n"
       parameters:
       - name: orderId
@@ -198,9 +199,9 @@ paths:
       - Order
       summary: Captures an order
       description: "Issues a request to capture a portion or the entire order after\
-        \ payment authorization.\n\nA valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)**\
-        \ is required to access this endpoint.\n  \n*GoCart offers Staging & Production\
-        \ environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments)\
+        \ payment authorization.\n\nA valid **JWT** or **[MAC](https://docs.skipify.com/docs/api-authentication-mac)**\
+        \ is required to access this endpoint.\n  \n*Skipify offers Staging & Production\
+        \ environments for the different phases of integration. See the [Environments](https://docs.skipify.com/docs/environments)\
         \ page for more details.*\n"
       parameters:
       - name: orderId
@@ -240,9 +241,9 @@ paths:
       - Order
       summary: Voids an order
       description: "Issues a request to void a portion or the entire order after payment\
-        \ capture.\n\nA valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)**\
-        \ is required to access this endpoint.\n  \n*GoCart offers Staging & Production\
-        \ environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments)\
+        \ capture.\n\nA valid **JWT** or **[MAC](https://docs.skipify.com/docs/api-authentication-mac)**\
+        \ is required to access this endpoint.\n  \n*Skipify offers Staging & Production\
+        \ environments for the different phases of integration. See the [Environments](https://docs.skipify.com/docs/environments)\
         \ page for more details.*\n"
       parameters:
       - name: orderId
@@ -282,9 +283,9 @@ paths:
       - Order
       summary: Refunds an order
       description: "JWT Required: Merchant\nAuthorization Policy: IP Address\nRoles:\
-        \ Super Admin\nCORS Policy: Merchant Portal\n  \n*GoCart offers Staging &\
+        \ Super Admin\nCORS Policy: Merchant Portal\n  \n*Skipify offers Staging &\
         \ Production environments for the different phases of integration. See the\
-        \ [Environments](https://docs.gocartpay.com/docs/environments) page for more\
+        \ [Environments](https://docs.skipify.com/docs/environments) page for more\
         \ details.*\n"
       parameters:
       - name: orderId
@@ -330,9 +331,9 @@ paths:
         \  - 994: System error\n  - 995: Unable to process card\n  - 996: Unable to\
         \ process the order\n  - 998: Internal payment gateway error\n  - 999: Internal\
         \ payment gateway error\n  - 1000: Internal payment gateway error\n  - 1001:\
-        \ Token Management System Error\n  - -1: Unknown error\n  \n*GoCart offers\
+        \ Token Management System Error\n  - -1: Unknown error\n  \n*Skipify offers\
         \ Staging & Production environments for the different phases of integration.\
-        \ See the [Environments](https://docs.gocartpay.com/docs/environments) page\
+        \ See the [Environments](https://docs.skipify.com/docs/environments) page\
         \ for more details.*\n"
       parameters:
       - name: orderId
@@ -377,7 +378,7 @@ components:
           example: true
         errorCode:
           type: string
-          description: A GoCart error code.
+          description: A Skipify error code.
           nullable: true
           example: "900"
         gatewayTransactionId:
@@ -485,12 +486,12 @@ components:
           example: ORDER-1234XX
         merchantId:
           type: string
-          description: The unique GoCart identifier for the merchant.
+          description: The unique Skipify identifier for the merchant.
           format: uuid
           example: d4916e8d-006f-4ed2-b321-e14cc7ac8e41
         customerId:
           type: string
-          description: The unique GoCart identifier for the customer.
+          description: The unique Skipify identifier for the customer.
           format: uuid
           nullable: true
           example: 3be646f8-563c-4efa-b9d1-2a43f96c38a2
@@ -696,7 +697,7 @@ components:
           readOnly: true
         externalId:
           type: string
-          description: The unique identifier for this transaction in GoCart.
+          description: The unique identifier for this transaction in Skipify.
           format: uuid
           nullable: true
       additionalProperties: false
@@ -939,7 +940,7 @@ components:
         hash:
           type: string
           description: |
-            A hash that is provided in the GET order. GoCart uses this to ensure the details presented to the customer are in alignment with the GoCart backend prior to submitting a payment.
+            A hash that is provided in the GET order. Skipify uses this to ensure the details presented to the customer are in alignment with the Skipify backend prior to submitting a payment.
           nullable: true
           example: UNHASHED
         customerId:
@@ -972,7 +973,7 @@ components:
         storeId:
           type: string
           description: |
-            An identifier provided by the merchant that GoCart will echo back in the payment response.
+            An identifier provided by the merchant that Skipify will echo back in the payment response.
           nullable: true
           example: Store123
         pointsAmount:
@@ -1195,7 +1196,7 @@ components:
       name: orderId
       in: query
       description: |
-        The unique identifier for the order in the context of GoCart.
+        The unique identifier for the order in the context of Skipify.
       required: false
       style: form
       explode: true
@@ -1227,6 +1228,29 @@ components:
         type: string
         format: uuid
         example: abcdae4c-3d8a-4d0d-8682-02d01befd57c
+    PageSize:
+      name: pageSize
+      in: query
+      description: |
+        The number of items per page
+      required: false
+      schema:
+        maximum: 50
+        minimum: 1
+        type: integer
+        example: 25
+        default: 25
+    PageNumber:
+      name: pageNumber
+      in: query
+      description: |
+        The page number to fetch
+      required: false
+      schema:
+        minimum: 1
+        type: integer
+        example: 1
+        default: 1
   securitySchemes:
     Bearer:
       type: http
