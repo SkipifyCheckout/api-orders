@@ -31,8 +31,8 @@ paths:
         ###### Skipify offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.skipify.com/docs/environments) page for more details.
       parameters:
         - $ref: '#/components/parameters/OrderIdQueryParameter'
-        - $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/parameters/PageSize'
-        - $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/parameters/PageNumber'
+        - $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/parameters/PageSize'
+        - $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/parameters/PageNumber'
       responses:
         '200':
           description: Success
@@ -46,7 +46,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse'
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse'
     post:
       tags:
         - Order
@@ -78,7 +78,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
   
   /orders/{orderId}:
     get:
@@ -106,7 +106,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
                 
   /orders/{orderId}/refund:
     post:
@@ -140,7 +140,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
   
   /orders/{orderId}/capture:
     post:
@@ -174,7 +174,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
   
   /orders/{orderId}/void:
     post:
@@ -208,7 +208,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
   
   /orders/{orderId}/reverse:
     post:
@@ -243,7 +243,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
   
   /orders/{orderId}/pay:
     post:
@@ -292,7 +292,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
           
 components:
   parameters:
@@ -866,7 +866,7 @@ components:
             $ref: '#/components/schemas/OrderBase'
       additionalProperties: false
       allOf:
-      - $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/PaginatedResponseBase'
+      - $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/PaginatedResponseBase'
       
     OrderRefundRequest:
       type: object
@@ -1108,12 +1108,8 @@ components:
       scheme: bearer
       
 servers: 
+  # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.4
-  - description: Staging Environment
-    url: https://api-staging.gocartpay.com
-  - description: Production Environment
-    url: https://api.gocartpay.com/
-      
+    url: https://virtserver.swaggerhub.com/Skipify/order-api/1.0.4
 security:
   - Bearer: []
