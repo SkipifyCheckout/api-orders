@@ -1,13 +1,13 @@
 openapi: 3.0.1
 info:
   title: Order API
-  version: 1.0.4
+  version: 1.0.5
   description: |
-    API used for managing GoCart orders. 
+    API used for managing Skipify orders. 
     
     Operations such as creating a new order, voiding, and refunding can be found here. 
     
-    Unless otherwise specified, each of these endpoints requires the user to be authenticated with a merchant's [MAC](https://docs.gocartpay.com/docs/api-authentication-mac) token or JWT.
+    Unless otherwise specified, each of these endpoints requires the user to be authenticated with a merchant's [MAC](https://docs.skipify.com/docs/api-authentication-mac) token or JWT.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -26,13 +26,13 @@ paths:
       description: |
         Retrieve a paginated summary of orders filtered based on querystring parameters.
         
-        A valid **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+        A valid **[MAC](https://docs.skipify.com/docs/api-authentication-mac)** is required to access this endpoint.
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        ###### Skipify offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.skipify.com/docs/environments) page for more details.
       parameters:
         - $ref: '#/components/parameters/OrderIdQueryParameter'
-        - $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/parameters/PageSize'
-        - $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/parameters/PageNumber'
+        - $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/parameters/PageSize'
+        - $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/parameters/PageNumber'
       responses:
         '200':
           description: Success
@@ -46,7 +46,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse'
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse'
     post:
       tags:
         - Order
@@ -54,9 +54,9 @@ paths:
       description: |
         Creates an order.
         
-        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+        A valid **JWT** or **[MAC](https://docs.skipify.com/docs/api-authentication-mac)** is required to access this endpoint.
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        ##### Skipify offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.skipify.com/docs/environments) page for more details.
       requestBody:
         description: ''
         content:
@@ -78,7 +78,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
   
   /orders/{orderId}:
     get:
@@ -88,9 +88,9 @@ paths:
       description: |
         Retrieve the specified order.
         
-        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+        A valid **JWT** or **[MAC](https://docs.skipify.com/docs/api-authentication-mac)** is required to access this endpoint.
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        #### Skipify offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.skipify.com/docs/environments) page for more details.
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       responses:
@@ -106,7 +106,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
                 
   /orders/{orderId}/refund:
     post:
@@ -116,9 +116,9 @@ paths:
       description: |
         Issues a request to refund a portion or the entire order.
         
-        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+        A valid **JWT** or **[MAC](https://docs.skipify.com/docs/api-authentication-mac)** is required to access this endpoint.
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        <sup><sub>Skipify offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.skipify.com/docs/environments) page for more details.</sup></sub>
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -140,7 +140,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
   
   /orders/{orderId}/capture:
     post:
@@ -150,9 +150,9 @@ paths:
       description: |
         Issues a request to capture a portion or the entire order after payment authorization.
         
-        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+        A valid **JWT** or **[MAC](https://docs.skipify.com/docs/api-authentication-mac)** is required to access this endpoint.
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        *Skipify offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.skipify.com/docs/environments) page for more details.*
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -174,7 +174,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
   
   /orders/{orderId}/void:
     post:
@@ -184,9 +184,9 @@ paths:
       description: |
         Issues a request to void a portion or the entire order after payment capture.
         
-        A valid **JWT** or **[MAC](https://docs.gocartpay.com/docs/api-authentication-mac)** is required to access this endpoint.
+        A valid **JWT** or **[MAC](https://docs.skipify.com/docs/api-authentication-mac)** is required to access this endpoint.
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        *Skipify offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.skipify.com/docs/environments) page for more details.*
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -208,7 +208,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
   
   /orders/{orderId}/reverse:
     post:
@@ -221,7 +221,7 @@ paths:
         Roles: Super Admin
         CORS Policy: Merchant Portal
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        *Skipify offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.skipify.com/docs/environments) page for more details.*
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -243,7 +243,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
   
   /orders/{orderId}/pay:
     post:
@@ -270,7 +270,7 @@ paths:
           - 1001: Token Management System Error
           - -1: Unknown error
           
-        *GoCart offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.gocartpay.com/docs/environments) page for more details.*
+        *Skipify offers Staging & Production environments for the different phases of integration. See the [Environments](https://docs.skipify.com/docs/environments) page for more details.*
       parameters:
         - $ref: '#/components/parameters/OrderIdPathParameter'
       requestBody:
@@ -292,7 +292,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/ExceptionResponse' 
+                $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/ExceptionResponse' 
           
 components:
   parameters:
@@ -300,7 +300,7 @@ components:
       name: orderId
       in: query
       description: |
-        The unique identifier for the order in the context of GoCart.
+        The unique identifier for the order in the context of Skipify.
       required: false
       schema:
         type: string
@@ -337,7 +337,7 @@ components:
           example: true
         errorCode:
           type: string
-          description: "A GoCart error code."
+          description: "A Skipify error code."
           nullable: true
           example: "900"
         gatewayTransactionId:
@@ -350,6 +350,11 @@ components:
           description: "The raw response from the payment gateway that processed the payment."
           nullable: true
           example: "Some payload that should not be used to drive merchant business logic!!"
+        stpReferenceNum:
+          type: string
+          nullable: true
+          description: "Worldpay assigned reference number on each transaction that is returned to the terminal and to be used on related payment requests"
+          example: "123456789"
       additionalProperties: false  
   
     
@@ -361,19 +366,20 @@ components:
         sku:
           type: string
           format: sku
-          example: "UGG-BB-PUR-06"
         description:
           type: string
           description: "The description for the line item."
-          example: "Purple Ugg boots in the Bailey Bow style"
         amount:
           type: integer
           format: cents
           description: "The amount for the line item (in USD cents)."
-          example: 9999
         category:
           type: string
-          example: "Footwear"
+      example:
+        sku: "UGG-BB-PUR-06"
+        description: "Purple Ugg boots in the Bailey Bow style"
+        amount: 9999
+        category: "Footwear"
       additionalProperties: false
       
     PurchaseDetail:
@@ -382,19 +388,20 @@ components:
         label:
           type: string
           description: string label for a detail
-          example: Store Address
           minLength: 0
           maxLength: 30
         description:
           type: string
           description: string description for a detail (max length of 30 for level 1 and 2; max length 105 for level 3)
-          example: 123 Street Name\nDenver, CO 12345
           minLength: 0
           maxLength: 30
         level:
           type: integer
           description: the display level for purchase details (can be 1, 2 or 3)
-          example: 3
+      example:
+        label: Store Address
+        description: 123 Street Name\nDenver, CO 12345
+        level: 3
     OrderPaymentMethod:
       type: object
       nullable: true
@@ -423,6 +430,11 @@ components:
           description: Expiration year of card used to submit payment
           format: int32
           example: 24
+      example:
+        cardBrand: "Visa"
+        last4CardNumber: "1234"
+        expMonth: 10
+        expYear: 24
     OrderBase:
       required:
         - merchantId
@@ -438,13 +450,13 @@ components:
         merchantId:
           type: string
           format: uuid
-          description: "The unique GoCart identifier for the merchant."
+          description: "The unique Skipify identifier for the merchant."
           example: "d4916e8d-006f-4ed2-b321-e14cc7ac8e41"
         customerId:
           type: string
           format: uuid
           nullable: true
-          description: "The unique GoCart identifier for the customer." 
+          description: "The unique Skipify identifier for the customer." 
           example: "3be646f8-563c-4efa-b9d1-2a43f96c38a2"
         subtotal:
           type: integer
@@ -516,13 +528,14 @@ components:
               minimum: 0
               maximum: 100
               description: "A tip percentage (e.g., 5% -> 5)"
-              example: 5
             amount:
               type: integer
               format: cents
               readOnly: true
               description: "The calculated tip monetary amount (percentage x order total)."
-              example: 100
+          example:
+            percent: 5
+            amount: 100
           additionalProperties: false
       
     ShippingAddress:
@@ -651,7 +664,7 @@ components:
         externalId:
           type: string
           format: uuid
-          description: "The unique identifier for this transaction in GoCart."
+          description: "The unique identifier for this transaction in Skipify."
           nullable: true
       example:
         gatewayTransactionId: "GC-29292383"
@@ -684,24 +697,9 @@ components:
               nullable: true
               items:
                 $ref: '#/components/schemas/PurchaseDetail'
-              example: [
-                {
-                  "label": "Store Address",
-                  "description": "123 Street Name\\nDenver, CO 12345",
-                  "level": 3
-                }
-              ]
             paymentMethod:
-              type: object
-              nullable: true
-              items:
-                $ref: '#/components/schemas/OrderPaymentMethod'
-              example: {
-                "cardBrand": "Visa",
-                "last4CardNumber": "1234",
-                "expMonth": 10,
-                "expYear": 24
-              }
+              allOf:
+                - $ref: '#/components/schemas/OrderPaymentMethod'
             orderLineItems:
               type: array
               items:
@@ -712,18 +710,16 @@ components:
                         type: string
                         format: uuid
                         description: "The unique identifier of the order line."
-                        example: "5e89fbdc-3381-4f29-913c-daf1ee785a60"
                   - $ref: '#/components/schemas/OrderLineBase'
               nullable: true
-              example: [
-                {
+              example:
+                [{
                   "externalId": "5e89fbdc-3381-4f29-913c-daf1ee785a60",
                   "sku": "UGG-BB-PUR-06",
                   "description": "Purple Ugg boots in the Bailey Bow style",
                   "amount": 9999,
                   "category": "Footwear"
-                }
-              ]
+                }]
           
     OrderRecordSavedDto:
         type: object
@@ -875,7 +871,7 @@ components:
             $ref: '#/components/schemas/OrderBase'
       additionalProperties: false
       allOf:
-      - $ref: 'https://api.swaggerhub.com/domains/GoCartPay/gocart-core-domain/1.0.0#/components/schemas/PaginatedResponseBase'
+      - $ref: 'https://api.swaggerhub.com/domains/Skipify/skipify-core-domain/1.0.1#/components/schemas/PaginatedResponseBase'
       
     OrderRefundRequest:
       type: object
@@ -918,7 +914,7 @@ components:
         hash:
           type: string
           description: |
-            A hash that is provided in the GET order. GoCart uses this to ensure the details presented to the customer are in alignment with the GoCart backend prior to submitting a payment.
+            A hash that is provided in the GET order. Skipify uses this to ensure the details presented to the customer are in alignment with the Skipify backend prior to submitting a payment.
           nullable: true
           example: "UNHASHED"
         customerId:
@@ -952,7 +948,7 @@ components:
           type: string
           nullable: true
           description: | 
-            An identifier provided by the merchant that GoCart will echo back in the payment response.
+            An identifier provided by the merchant that Skipify will echo back in the payment response.
           example: "Store123"
         pointsAmount:
           type: integer
@@ -1078,6 +1074,11 @@ components:
         gatewayResponse:
           type: string
           nullable: true
+        stpReferenceNum:
+          type: string
+          nullable: true
+          description: "Worldpay assigned reference number on each transaction that is returned to the terminal and to be used on related payment requests"
+          example: "123456789"
       additionalProperties: false
       
     OrderVoidRequest:
@@ -1117,12 +1118,8 @@ components:
       scheme: bearer
       
 servers: 
+  # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/GoCartPay/gocart-order-api/1.0.4
-  - description: Staging Environment
-    url: https://api-staging.gocartpay.com
-  - description: Production Environment
-    url: https://api.gocartpay.com/
-      
+    url: https://virtserver.swaggerhub.com/Skipify/order-api/1.0.5
 security:
   - Bearer: []
