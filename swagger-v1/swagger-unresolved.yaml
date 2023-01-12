@@ -326,6 +326,16 @@ components:
         type: string
         format: uuid
         example: "abcdae4c-3d8a-4d0d-8682-02d01befd57c"
+    BillingAddressIdPathParameter:
+      name: billingAddressId
+      in: path
+      required: true
+      description: |
+        The unique identifier for the billing address.
+      schema:
+        type: string
+        format: uuid
+        example: "abcdae4c-3d8a-4d0d-8682-02d01befd57c"
         
   schemas:
     BaseResult:
@@ -700,6 +710,12 @@ components:
             paymentMethod:
               allOf:
                 - $ref: '#/components/schemas/OrderPaymentMethod'
+            shippingAddress:
+              $ref: '#/components/schemas/ShippingAddress'
+            billingAddress:
+              $ref: '#/components/schemas/ShippingAddress'
+            shippingMethod:
+              $ref: '#/components/schemas/ShippingMethod'
             orderLineItems:
               type: array
               items:
@@ -728,9 +744,11 @@ components:
           - $ref: '#/components/schemas/OrderWithDetails'
         properties:
           shippingAddress:
-           $ref: '#/components/schemas/ShippingMethod'
+           $ref: '#/components/schemas/ShippingAddress'
+          billingAddress:
+           $ref: '#/components/schemas/ShippingAddress'
           shippingMethod:
-            $ref: '#/components/schemas/ShippingAddress'
+            $ref: '#/components/schemas/ShippingMethod'
           storeId:
             type: string
             description: "Identifier for the store the order is from"
@@ -826,7 +844,7 @@ components:
           format: uuid
           description: "The unique identifier of the selected customer's payment method."
           example: "da59a90c-c143-4688-bb95-412aa4cd6077"
-        addressId:
+        billingAddressId:
           type: string
           format: uuid
           description: "The unique identifier of the customer's billing address."
