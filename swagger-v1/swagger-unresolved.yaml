@@ -479,6 +479,16 @@ components:
           nullable: true
           description: "The order tax amount in cents format (e.g., $1.00 -> 100)"
           example: 700
+        tip:
+          type: integer
+          format: cents
+          description: "The tip amount selected by the customer in cents format (e.g., $1.00 -> 100)"
+          example: 0
+        total:
+          type: integer
+          format: int32
+          description: "The order total in cents format (e.g., $1.00 -> 100)"
+          example: 10000
         shipping:
           type: integer
           format: cents
@@ -489,10 +499,41 @@ components:
           format: iso4217
           description: "The currency for this order in ISO 4217 format."
           example: "USD"
+        cashAmount:
+          type: integer
+          format: int32
+          description: "The order total in cents format (e.g., $1.00 -> 100)"
+        pointsAmount:
+          type: integer
+          format: cents
+          description: |
+            The cash value of the point. This represents a cash equivalent value for the total points. 
+            
+            This is the value that gets passed to payment gateways.
+          nullable: true
+          minimum: 0
+          example: 10000
+        totalPoints:
+          type: integer
+          description: |
+            How many points are being redeemed to pay for this order.
+          nullable: true
+          minimum: 0
+          example: 1000000
         orderDescription:
           type: string
           description: "A general description for the order."
           example: "A wonderful order of stuff."
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        settlementType:
+          $ref: '#/components/schemas/SettlementType'
+        lastProcessingAttempt:
+          type: string
+          format: date-time
+        hash:
+          type: string
+          example: "13e864a1444dbe6a61b6acb5775b61db535072cfb999bf33459ede23867895e3"
         purchaseDetails:
           type: array
           nullable: true
@@ -504,6 +545,21 @@ components:
           maxItems: 3
         paymentMethod:
           $ref: '#/components/schemas/OrderPaymentMethod'
+        billingAddressId:
+          type: string
+          format: uuid
+          description: "The unique identifier of the customer's billing address."
+          example: "43c98679-cf02-48d4-9784-6022870d7e3f"
+        shippingAddressId:
+          type: string
+          format: uuid
+          description: "The unique identifier of the customer's shipping address."
+          example: "5e46603f-b77c-4e99-b02e-3b9a3fe449f4"
+        shippingMethodId:
+          type: string
+          format: uuid
+          description: "The unique identifier of the customer's selected shipping method."
+          example: "0ded3708-8218-48f4-bd8c-2116bd61435a"
         metadata:
           type: object
           description: |
@@ -548,7 +604,7 @@ components:
             amount: 100
           additionalProperties: false
       
-    ShippingAddress:
+    Address:
       type: object
       nullable: true
       properties:
@@ -711,9 +767,9 @@ components:
               allOf:
                 - $ref: '#/components/schemas/OrderPaymentMethod'
             shippingAddress:
-              $ref: '#/components/schemas/ShippingAddress'
+              $ref: '#/components/schemas/Address'
             billingAddress:
-              $ref: '#/components/schemas/ShippingAddress'
+              $ref: '#/components/schemas/Address'
             shippingMethod:
               $ref: '#/components/schemas/ShippingMethod'
             orderLineItems:
@@ -744,9 +800,9 @@ components:
           - $ref: '#/components/schemas/OrderWithDetails'
         properties:
           shippingAddress:
-           $ref: '#/components/schemas/ShippingAddress'
+           $ref: '#/components/schemas/Address'
           billingAddress:
-           $ref: '#/components/schemas/ShippingAddress'
+           $ref: '#/components/schemas/Address'
           shippingMethod:
             $ref: '#/components/schemas/ShippingMethod'
           storeId:
