@@ -508,6 +508,17 @@ components:
           format: cents
           nullable: true
           example: 700
+        tip:
+          type: integer
+          description: "The tip amount selected by the customer in cents format (e.g.,\
+            \ $1.00 -> 100)"
+          format: cents
+          example: 0
+        total:
+          type: integer
+          description: "The order total in cents format (e.g., $1.00 -> 100)"
+          format: int32
+          example: 10000
         shipping:
           type: integer
           description: "The order shipping amount in cents format (e.g., $1.00 ->\
@@ -519,10 +530,40 @@ components:
           description: The currency for this order in ISO 4217 format.
           format: iso4217
           example: USD
+        cashAmount:
+          type: integer
+          description: "The order total in cents format (e.g., $1.00 -> 100)"
+          format: int32
+        pointsAmount:
+          minimum: 0
+          type: integer
+          description: "The cash value of the point. This represents a cash equivalent\
+            \ value for the total points. \n\nThis is the value that gets passed to\
+            \ payment gateways.\n"
+          format: cents
+          nullable: true
+          example: 10000
+        totalPoints:
+          minimum: 0
+          type: integer
+          description: |
+            How many points are being redeemed to pay for this order.
+          nullable: true
+          example: 1000000
         orderDescription:
           type: string
           description: A general description for the order.
           example: A wonderful order of stuff.
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        settlementType:
+          $ref: '#/components/schemas/SettlementType'
+        lastProcessingAttempt:
+          type: string
+          format: date-time
+        hash:
+          type: string
+          example: 13e864a1444dbe6a61b6acb5775b61db535072cfb999bf33459ede23867895e3
         purchaseDetails:
           maxItems: 3
           minItems: 0
@@ -536,6 +577,21 @@ components:
             - $ref: '#/components/schemas/PurchaseDetail'
         paymentMethod:
           $ref: '#/components/schemas/OrderPaymentMethod'
+        billingAddressId:
+          type: string
+          description: The unique identifier of the customer's billing address.
+          format: uuid
+          example: 43c98679-cf02-48d4-9784-6022870d7e3f
+        shippingAddressId:
+          type: string
+          description: The unique identifier of the customer's shipping address.
+          format: uuid
+          example: 5e46603f-b77c-4e99-b02e-3b9a3fe449f4
+        shippingMethodId:
+          type: string
+          description: The unique identifier of the customer's selected shipping method.
+          format: uuid
+          example: 0ded3708-8218-48f4-bd8c-2116bd61435a
         metadata:
           type: object
           additionalProperties:
@@ -578,7 +634,7 @@ components:
         example:
           percent: 5
           amount: 100
-    ShippingAddress:
+    Address:
       type: object
       properties:
         firstName:
@@ -737,9 +793,9 @@ components:
             allOf:
             - $ref: '#/components/schemas/OrderPaymentMethod'
           shippingAddress:
-            $ref: '#/components/schemas/ShippingAddress'
+            $ref: '#/components/schemas/Address'
           billingAddress:
-            $ref: '#/components/schemas/ShippingAddress'
+            $ref: '#/components/schemas/Address'
           shippingMethod:
             $ref: '#/components/schemas/ShippingMethod'
           orderLineItems:
@@ -764,9 +820,9 @@ components:
       type: object
       properties:
         shippingAddress:
-          $ref: '#/components/schemas/ShippingAddress'
+          $ref: '#/components/schemas/Address'
         billingAddress:
-          $ref: '#/components/schemas/ShippingAddress'
+          $ref: '#/components/schemas/Address'
         shippingMethod:
           $ref: '#/components/schemas/ShippingMethod'
         storeId:
